@@ -4,51 +4,28 @@ const path = require('path');
 
 const PORT = 3000;
 
-// Функция для определения типа контента (чтобы стили и шрифты загружались корректно)
-function getContentType(filePath) {
-    const extname = path.extname(filePath);
-    switch (extname) {
-        case '.html': return 'text/html; charset=utf-8';
-        case '.css': return 'text/css';
-        case '.js': return 'text/javascript';
-        case '.json': return 'application/json';
-        case '.png': return 'image/png';
-        case '.jpg': return 'image/jpeg';
-        case '.ico': return 'image/x-icon';
-        default: return 'application/octet-stream';
-    }
-}
+http.createServer((req, res) => {
+    // Сервер ищет файл прямо в той папке, откуда его запустили
+    let filePath = path.join(__dirname, 'index.html');
 
-const server = http.createServer((req, res) => {
-    // Если запрашивают главный адрес, отдаем index.html
-    let filePath = req.url === '/' 
-        ? path.join(__dirname, 'public', 'index.html') 
-        : path.join(__dirname, 'public', req.url);
-
-    // Читаем файл с диска
     fs.readFile(filePath, (error, content) => {
         if (error) {
-            if (error.code === 'ENOENT') {
-                // Если файл не найден, выдаем аккуратную 404 ошибку в стиле Metro
-                res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
-                res.end('<body style="background:#000;color:#fff;font-family:sans-serif;padding:40px"><h1>404: File Not Found</h1><p>Проверь, лежит ли файл index.html в папке public</p></body>');
-            } else {
-                // Любая другая системная ошибка
-                res.writeHead(500);
-                res.end(`Системная ошибка: ${error.code}`);
-            }
+            res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
+            res.end(`
+                <body style="background:#111; color:#fff; font-family:sans-serif; padding:40px;">
+                    <h1 style="color:#ff3333">Файл не найден (404)</h1>
+                    <p>Я ищу твой файл <b>index.html</b> вот по этому точному пути:</p>
+                    <code style="background:#222; padding:10px; display:block; border-left:4px solid #ff3333; color:#00adb5;">
+                        ${filePath}
+                    </code>
+                    <p style="margin-top:20px;">Перенеси свой <b>index.html</b> именно в эту папку и обнови страницу!</p>
+                </body>
+            `);
         } else {
-            // Если всё отлично, отдаем файл браузеру
-            res.writeHead(200, { 'Content-Type': getContentType(filePath) });
-            res.end(content, 'utf-8');
+            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+            res.end(content);
         }
     });
-});
-
-// Запуск прослушивания порта
-server.listen(PORT, () => {
-    console.log(`==========================================`);
-    console.log(`  WinMarket Локальный Сервер запущен!`);
-    console.log(`  Ссылка для браузера: http://localhost:${PORT}`);
-    console.log(`==========================================`);
+}).listen(PORT, () => {
+    console.log(`Сервер запущен на http://localhost:${PORT}`);
 });
