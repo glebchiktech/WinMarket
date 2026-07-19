@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* Базовые сбросы в стиле Metro — строго острые углы (no border-radius) */
         * {
@@ -18,7 +17,7 @@
         body {
             background-color: #000000; /* Глубокий черный фон Windows Phone */
             color: #ffffff;
-            font-family: "Segoe UI", "Open Sans", -apple-system, sans-serif;
+            font-family: "Segoe UI", "Segoe WP", "Open Sans", -apple-system, sans-serif;
             margin: 0;
             padding: 80px 20px 40px 20px;
             overflow-x: hidden;
@@ -35,7 +34,11 @@
             top: 0;
             left: 0;
             z-index: 1000;
+            display: -webkit-box;
+            display: -ms-flexbox;
             display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
             align-items: center;
             padding: 0 20px;
         }
@@ -52,6 +55,7 @@
             transition: background-color 0.1s;
             user-select: none;
             -webkit-user-select: none;
+            -ms-user-select: none;
         }
 
         .menu-btn:active {
@@ -68,6 +72,7 @@
             padding: 5px 10px;
             user-select: none;
             -webkit-user-select: none;
+            -ms-user-select: none;
             transition: color 0.1s ease;
         }
         
@@ -86,6 +91,7 @@
             padding-left: 10px;
             user-select: none;
             -webkit-user-select: none;
+            -ms-user-select: none;
         }
 
         .hub-header .app-label {
@@ -117,11 +123,19 @@
             border-right: 1px solid #222222;
             z-index: 999;
             transition: left 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+            display: -webkit-box;
+            display: -ms-flexbox;
             display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: column;
             flex-direction: column;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
             justify-content: space-between;
             user-select: none;
             -webkit-user-select: none;
+            -ms-user-select: none;
         }
 
         .drawer-overlay.open {
@@ -168,12 +182,16 @@
         }
 
         .lang-switch-container {
+            display: -webkit-box;
+            display: -ms-flexbox;
             display: flex;
             gap: 5px;
             margin-bottom: 15px; /* Отступ перед кнопкой версии */
         }
 
         .lang-btn {
+            -webkit-box-flex: 1;
+            -ms-flex: 1;
             flex: 1;
             background-color: #222222;
             border: 2px solid transparent;
@@ -218,11 +236,13 @@
             border-color: #ffffff;
         }
 
-        /* Контейнер Metro-сетки */
+        /* Контейнер Metro-сетки с поддержкой префиксов IE/Edge */
         .metro-container {
             max-width: 1200px;
             margin: 0 auto;
+            display: -ms-grid;
             display: grid;
+            -ms-grid-columns: (minmax(140px, 1fr))[auto-fill];
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             grid-auto-rows: 140px;
             gap: 10px;
@@ -240,13 +260,22 @@
             overflow: hidden;
             user-select: none;
             -webkit-user-select: none;
+            -ms-user-select: none;
+            display: -webkit-box;
+            display: -ms-flexbox;
             display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: column;
             flex-direction: column;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
             justify-content: space-between;
         }
 
         .tile:active {
             transform: scale(0.96);
+            -webkit-transform: scale(0.96);
         }
 
         .tile:hover {
@@ -254,8 +283,8 @@
         }
 
         /* Размеры плиток */
-        .tile.wide { grid-column: span 2; }
-        .tile.double-size { grid-column: span 2; grid-row: span 2; }
+        .tile.wide { -ms-grid-column-span: 2; grid-column: span 2; }
+        .tile.double-size { -ms-grid-column-span: 2; grid-column: span 2; -ms-grid-row-span: 2; grid-row: span 2; }
 
         /* Набор цветов Metro UI */
         .tile.green { background-color: #107c41; }
@@ -283,8 +312,9 @@
         }
 
         .tile-icon {
-            font-size: 36px;
+            font-size: 32px;
             margin-bottom: 10px;
+            font-family: "Segoe UI", sans-serif;
         }
 
         .tile-label {
@@ -334,7 +364,7 @@
 
     <!-- Навигационная панель Windows -->
     <header class="metro-navbar">
-        <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
         <span class="navbar-brand" onclick="goHome()">WinMarket</span>
     </header>
 
@@ -374,28 +404,28 @@
         
         <!-- Интерактивные плитки быстрого фильтра (Pivot) -->
         <div class="tile filter-tile active dark" id="pivot-all" onclick="filterGrid('all', this)">
-            <div class="tile-icon"><i class="fa-solid fa-border-all" style="color: #00aba9;"></i></div>
+            <div class="tile-icon" style="color: #00aba9;">❖</div>
             <div class="tile-title" data-ru="Все софты" data-en="All Software">Все софты</div>
         </div>
 
         <div class="tile filter-tile dark" id="pivot-apps" onclick="filterGrid('apps', this)">
-            <div class="tile-icon"><i class="fa-solid fa-cubes" style="color: #0078d7;"></i></div>
+            <div class="tile-icon" style="color: #0078d7;">⚃</div>
             <div class="tile-title" data-ru="Приложения" data-en="Apps">Приложения</div>
         </div>
 
         <div class="tile filter-tile dark" id="pivot-games" onclick="filterGrid('games', this)">
-            <div class="tile-icon"><i class="fa-solid fa-gamepad" style="color: #107c41;"></i></div>
+            <div class="tile-icon" style="color: #107c41;">🎮</div>
             <div class="tile-title" data-ru="Игры" data-en="Games">Игры</div>
         </div>
 
         <div class="tile filter-tile dark" id="pivot-social" onclick="filterGrid('social', this)">
-            <div class="tile-icon"><i class="fa-solid fa-comments" style="color: #b4009e;"></i></div>
+            <div class="tile-icon" style="color: #b4009e;">💬</div>
             <div class="tile-title" data-ru="Соц сети" data-en="Social">Соц сети</div>
         </div>
 
         <!-- ТОВАРЫ -->
         <div class="tile double-size green product-tile" data-cat="games">
-            <div class="tile-icon"><i class="fa-solid fa-star"></i></div>
+            <div class="tile-icon">⭐</div>
             <div>
                 <div class="tile-title">Brawl Stars</div>
                 <div class="tile-desc" data-ru="Динамичный мобильный экшен. Сражайтесь, собирайте кубки и прокачивайте бойцов." data-en="Dynamic mobile action. Fight, collect trophies and level up your brawlers.">Динамичный мобильный экшен. Сражайтесь, собирайте кубки и прокачивайте бойцов.</div>
@@ -412,13 +442,13 @@
         </div>
 
         <div class="tile purple product-tile" data-cat="social">
-            <div class="tile-icon"><i class="fa-solid fa-comment-dots"></i></div>
+            <div class="tile-icon">✉</div>
             <div class="tile-title" data-ru="ВКонтакте" data-en="VKontakte">ВКонтакте</div>
             <span class="tile-label" data-ru="соц сеть" data-en="social">соц сеть</span>
         </div>
 
         <div class="tile blue product-tile" data-cat="apps">
-            <div class="tile-icon"><i class="fa-solid fa-radio"></i></div>
+            <div class="tile-icon">📻</div>
             <div class="tile-title">Intercomm Radio</div>
             <span class="tile-label" data-ru="приложение" data-en="app">приложение</span>
         </div>
@@ -432,7 +462,7 @@
         </div>
 
         <div class="tile orange product-tile" data-cat="tools">
-            <div class="tile-icon"><i class="fa-solid fa-bolt"></i></div>
+            <div class="tile-icon">⚡</div>
             <div class="tile-title">WinFlash</div>
             <span class="tile-label" data-ru="инструмент" data-en="tool">инструмент</span>
         </div>
@@ -446,7 +476,7 @@
         </div>
 
         <div class="tile blue product-tile" data-cat="apps">
-            <div class="tile-icon"><i class="fa-solid fa-linux"></i></div>
+            <div class="tile-icon">🐧</div>
             <div class="tile-title">Zorin Appearance</div>
             <span class="tile-label" data-ru="приложение" data-en="app">приложение</span>
         </div>
@@ -496,6 +526,8 @@
             const products = document.querySelectorAll('.product-tile');
             products.forEach(p => {
                 if (category === 'all' || p.getAttribute('data-cat') === category) {
+                    p.style.display = '-webkit-box';
+                    p.style.display = '-ms-flexbox';
                     p.style.display = 'flex';
                 } else {
                     p.style.display = 'none';
