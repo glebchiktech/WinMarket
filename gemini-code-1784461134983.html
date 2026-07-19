@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WinMarket — Приложения и Игры</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Базовые сбросы в стиле Metro — строго острые углы (no border-radius) */
+        * {
+            box-sizing: border-box;
+            border-radius: 0 !important;
+        }
+
+        body {
+            background-color: #000000; /* Глубокий черный фон Windows Phone */
+            color: #ffffff;
+            font-family: "Segoe UI", "Open Sans", -apple-system, sans-serif;
+            margin: 0;
+            padding: 80px 20px 40px 20px;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Навигационная панель */
+        header.metro-navbar {
+            background-color: #000000;
+            height: 55px;
+            width: 100%;
+            border-bottom: 1px solid #222222;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px 10px;
+            margin-right: 15px;
+            line-height: 1;
+            transition: background-color 0.1s;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .menu-btn:active {
+            background-color: #333333;
+        }
+
+        .navbar-brand {
+            font-size: 20px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: inline-block;
+            padding: 5px 10px;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: color 0.1s ease;
+        }
+        
+        .navbar-brand:hover {
+            color: #00aba9;
+        }
+        
+        .navbar-brand:active {
+            opacity: 0.7;
+        }
+
+        /* Заголовок в стиле Windows Phone "Hub" */
+        .hub-header {
+            max-width: 1200px;
+            margin: 10px auto 30px auto;
+            padding-left: 10px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .hub-header .app-label {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #00aba9;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .hub-header h1 {
+            font-size: 58px;
+            font-weight: 300;
+            margin: 0;
+            letter-spacing: -1.5px;
+            text-transform: lowercase;
+            line-height: 1.1;
+        }
+
+        /* Выдвижное боковое меню категорий */
+        .drawer-overlay {
+            position: fixed;
+            top: 55px;
+            left: -270px;
+            width: 260px;
+            height: calc(100% - 55px);
+            background-color: #111111;
+            border-right: 1px solid #222222;
+            z-index: 999;
+            transition: left 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .drawer-overlay.open {
+            left: 0;
+        }
+
+        .drawer-menu {
+            list-style: none;
+            padding: 10px 0;
+            margin: 0;
+        }
+
+        .drawer-item {
+            padding: 16px 24px;
+            font-size: 18px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: background-color 0.1s;
+        }
+
+        .drawer-item:hover {
+            background-color: #222222;
+        }
+
+        .drawer-item.active {
+            background-color: #00aba9;
+            font-weight: 400;
+        }
+
+        /* Блок настроек с новыми элементами */
+        .drawer-settings {
+            border-top: 1px solid #222222;
+            padding: 20px 24px;
+            background-color: #151515;
+        }
+
+        .settings-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888888;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .lang-switch-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px; /* Отступ перед кнопкой версии */
+        }
+
+        .lang-btn {
+            flex: 1;
+            background-color: #222222;
+            border: 2px solid transparent;
+            color: #ffffff;
+            padding: 8px 0;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.1s, border-color 0.1s;
+        }
+
+        .lang-btn:hover {
+            border-color: #555555;
+        }
+
+        .lang-btn.active {
+            background-color: #00aba9;
+            border-color: #ffffff;
+        }
+
+        /* Кнопка "О версии" в стиле системных кнопок Windows Phone */
+        .version-btn {
+            width: 100%;
+            background-color: transparent;
+            border: 2px solid #555555;
+            color: #ffffff;
+            padding: 8px 0;
+            font-size: 14px;
+            font-weight: 400;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.1s, border-color 0.1s;
+        }
+
+        .version-btn:hover {
+            border-color: #ffffff;
+        }
+
+        .version-btn:active {
+            background-color: #00aba9;
+            border-color: #ffffff;
+        }
+
+        /* Контейнер Metro-сетки */
+        .metro-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            grid-auto-rows: 140px;
+            gap: 10px;
+        }
+
+        /* Базовый стиль плитки */
+        .tile {
+            position: relative;
+            background-color: #00aba9;
+            color: #ffffff;
+            padding: 15px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.1s ease, border-color 0.1s ease;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .tile:active {
+            transform: scale(0.96);
+        }
+
+        .tile:hover {
+            border-color: #ffffff;
+        }
+
+        /* Размеры плиток */
+        .tile.wide { grid-column: span 2; }
+        .tile.double-size { grid-column: span 2; grid-row: span 2; }
+
+        /* Набор цветов Metro UI */
+        .tile.green { background-color: #107c41; }
+        .tile.purple { background-color: #b4009e; }
+        .tile.orange { background-color: #d83b01; }
+        .tile.blue { background-color: #0078d7; }
+        .tile.dark { background-color: #1d1d1d; }
+
+        /* Внутреннее содержимое плиток */
+        .tile-title {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .tile-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 5px;
+            line-height: 1.3;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .tile-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .tile-label {
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+            font-size: 11px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: lowercase;
+        }
+
+        /* Плитки-фильтры (Pivot) */
+        .filter-tile {
+            opacity: 0.6;
+            transition: opacity 0.2s, border-color 0.2s;
+        }
+
+        .filter-tile.active {
+            opacity: 1;
+            border: 2px solid #ffffff;
+        }
+
+        /* Экранный шилд */
+        .click-shield {
+            position: fixed;
+            top: 55px;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 55px);
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 998;
+        }
+        .click-shield.open {
+            display: block;
+        }
+
+        .system-info-text {
+            font-size: 11px;
+            line-height: 1.4;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Навигационная панель Windows -->
+    <header class="metro-navbar">
+        <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+        <span class="navbar-brand" onclick="goHome()">WinMarket</span>
+    </header>
+
+    <!-- Защитный слой под меню -->
+    <div class="click-shield" id="shield" onclick="toggleMenu()"></div>
+
+    <!-- Выдвижная шторка с категориями и настройками -->
+    <div class="drawer-overlay" id="drawer">
+        <ul class="drawer-menu">
+            <li class="drawer-item active" id="menu-all" onclick="selectCategory('all', this)" data-ru="все категории" data-en="all categories">все категории</li>
+            <li class="drawer-item" id="menu-apps" onclick="selectCategory('apps', this)" data-ru="приложения" data-en="applications">приложения</li>
+            <li class="drawer-item" id="menu-games" onclick="selectCategory('games', this)" data-ru="игры" data-en="games">игры</li>
+            <li class="drawer-item" id="menu-social" onclick="selectCategory('social', this)" data-ru="соц сети" data-en="social networks">соц сети</li>
+            <li class="drawer-item" id="menu-tools" onclick="selectCategory('tools', this)" data-ru="инструменты" data-en="tools">инструменты</li>
+        </ul>
+        
+        <!-- Настройки языка и инфо о версии -->
+        <div class="drawer-settings">
+            <div class="settings-title" id="settings-lang-title" data-ru="настройки" data-en="settings">настройки</div>
+            <div class="lang-switch-container">
+                <button class="lang-btn active" id="lang-ru" onclick="changeLanguage('ru')">RU</button>
+                <button class="lang-btn" id="lang-en" onclick="changeLanguage('en')">EN</button>
+            </div>
+            <!-- НОВАЯ КНОПКА: О версии -->
+            <button class="version-btn" id="version-btn-text" onclick="showVersionInfo()" data-ru="о версии" data-en="about version">о версии</button>
+        </div>
+    </div>
+
+    <!-- Шапка Windows Hub -->
+    <header class="hub-header">
+        <div class="app-label" id="hub-subtitle" data-ru="Магазин софта и развлечений" data-en="Software & Entertainment Store">Магазин софта и развлечений</div>
+        <h1 id="hub-title" data-ru="витрина" data-en="showcase">витрина</h1>
+    </header>
+
+    <!-- Сетка плиток Metro UI -->
+    <main class="metro-container" id="metro-grid">
+        
+        <!-- Интерактивные плитки быстрого фильтра (Pivot) -->
+        <div class="tile filter-tile active dark" id="pivot-all" onclick="filterGrid('all', this)">
+            <div class="tile-icon"><i class="fa-solid fa-border-all" style="color: #00aba9;"></i></div>
+            <div class="tile-title" data-ru="Все софты" data-en="All Software">Все софты</div>
+        </div>
+
+        <div class="tile filter-tile dark" id="pivot-apps" onclick="filterGrid('apps', this)">
+            <div class="tile-icon"><i class="fa-solid fa-cubes" style="color: #0078d7;"></i></div>
+            <div class="tile-title" data-ru="Приложения" data-en="Apps">Приложения</div>
+        </div>
+
+        <div class="tile filter-tile dark" id="pivot-games" onclick="filterGrid('games', this)">
+            <div class="tile-icon"><i class="fa-solid fa-gamepad" style="color: #107c41;"></i></div>
+            <div class="tile-title" data-ru="Игры" data-en="Games">Игры</div>
+        </div>
+
+        <div class="tile filter-tile dark" id="pivot-social" onclick="filterGrid('social', this)">
+            <div class="tile-icon"><i class="fa-solid fa-comments" style="color: #b4009e;"></i></div>
+            <div class="tile-title" data-ru="Соц сети" data-en="Social">Соц сети</div>
+        </div>
+
+        <!-- ТОВАРЫ -->
+        <div class="tile double-size green product-tile" data-cat="games">
+            <div class="tile-icon"><i class="fa-solid fa-star"></i></div>
+            <div>
+                <div class="tile-title">Brawl Stars</div>
+                <div class="tile-desc" data-ru="Динамичный мобильный экшен. Сражайтесь, собирайте кубки и прокачивайте бойцов." data-en="Dynamic mobile action. Fight, collect trophies and level up your brawlers.">Динамичный мобильный экшен. Сражайтесь, собирайте кубки и прокачивайте бойцов.</div>
+            </div>
+            <span class="tile-label" data-ru="игра" data-en="game">игра</span>
+        </div>
+
+        <div class="tile wide orange product-tile" data-cat="tools">
+            <div>
+                <div class="tile-title">Droidmarket</div>
+                <div class="tile-desc" data-ru="Каталог и веб-магазин приложений для классических Android устройств." data-en="App catalog and web store designed for classic Android devices.">Каталог и веб-магазин приложений для классических Android устройств.</div>
+            </div>
+            <span class="tile-label" data-ru="инструмент" data-en="tool">инструмент</span>
+        </div>
+
+        <div class="tile purple product-tile" data-cat="social">
+            <div class="tile-icon"><i class="fa-solid fa-comment-dots"></i></div>
+            <div class="tile-title" data-ru="ВКонтакте" data-en="VKontakte">ВКонтакте</div>
+            <span class="tile-label" data-ru="соц сеть" data-en="social">соц сеть</span>
+        </div>
+
+        <div class="tile blue product-tile" data-cat="apps">
+            <div class="tile-icon"><i class="fa-solid fa-radio"></i></div>
+            <div class="tile-title">Intercomm Radio</div>
+            <span class="tile-label" data-ru="приложение" data-en="app">приложение</span>
+        </div>
+
+        <div class="tile wide green product-tile" data-cat="games">
+            <div>
+                <div class="tile-title">Clash Royale</div>
+                <div class="tile-desc" data-ru="Тактическая карточная стратегия. Собирайте колоды и крушите башни врага." data-en="Tactical card strategy game. Collect decks and destroy enemy towers.">Тактическая карточная стратегия. Собирайте колоды и крушите башни врага.</div>
+            </div>
+            <span class="tile-label" data-ru="игра" data-en="game">игра</span>
+        </div>
+
+        <div class="tile orange product-tile" data-cat="tools">
+            <div class="tile-icon"><i class="fa-solid fa-bolt"></i></div>
+            <div class="tile-title">WinFlash</div>
+            <span class="tile-label" data-ru="инструмент" data-en="tool">инструмент</span>
+        </div>
+
+        <div class="tile wide purple product-tile" data-cat="social">
+            <div>
+                <div class="tile-title">Telegram Messenger</div>
+                <div class="tile-desc" data-ru="Сверхбыстрый и безопасный мессенджер с поддержкой каналов и ботов." data-en="Super-fast and secure messenger supporting channels and automated bots.">Сверхбыстрый и безопасный мессенджер с поддержкой каналов и ботов.</div>
+            </div>
+            <span class="tile-label" data-ru="соц сеть" data-en="social">соц сеть</span>
+        </div>
+
+        <div class="tile blue product-tile" data-cat="apps">
+            <div class="tile-icon"><i class="fa-solid fa-linux"></i></div>
+            <div class="tile-title">Zorin Appearance</div>
+            <span class="tile-label" data-ru="приложение" data-en="app">приложение</span>
+        </div>
+
+        <div class="tile wide dark">
+            <div class="tile-title" style="color: #00aba9;">WinMarket Catalog</div>
+            <div class="system-info-text" data-ru="Магазин контента адаптирован под строгую CSS Grid разметку плиток без скруглений. Совместимо с мобильными и десктопными экранами." data-en="Content store adapted to strict CSS Grid layouts with sharp edges. Compatible with both mobile and desktop screens.">
+                Магазин контента адаптирован под строгую CSS Grid разметку плиток без скруглений. Совместимо с мобильными и десктопными экранами.
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        let currentLang = 'ru';
+
+        function toggleMenu() {
+            const drawer = document.getElementById('drawer');
+            const shield = document.getElementById('shield');
+            drawer.classList.toggle('open');
+            shield.classList.toggle('open');
+        }
+
+        function goHome() {
+            const items = document.querySelectorAll('.drawer-item');
+            items.forEach(item => item.classList.remove('active'));
+            document.getElementById('menu-all').classList.add('active');
+            
+            filterGrid('all', document.getElementById('pivot-all'));
+            
+            const drawer = document.getElementById('drawer');
+            if(drawer.classList.contains('open')) {
+                toggleMenu();
+            }
+        }
+
+        function filterGrid(category, element) {
+            const filters = document.querySelectorAll('.filter-tile');
+            filters.forEach(f => f.classList.remove('active'));
+            if(element) {
+                element.classList.add('active');
+            } else {
+                const targetPivot = document.getElementById('pivot-' + category);
+                if (targetPivot) targetPivot.classList.add('active');
+            }
+
+            const products = document.querySelectorAll('.product-tile');
+            products.forEach(p => {
+                if (category === 'all' || p.getAttribute('data-cat') === category) {
+                    p.style.display = 'flex';
+                } else {
+                    p.style.display = 'none';
+                }
+            });
+        }
+
+        function selectCategory(category, element) {
+            const items = document.querySelectorAll('.drawer-item');
+            items.forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+            
+            filterGrid(category, null);
+            toggleMenu();
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            
+            document.getElementById('lang-ru').classList.remove('active');
+            document.getElementById('lang-en').classList.remove('active');
+            document.getElementById('lang-' + lang).classList.add('active');
+
+            const translatableElements = document.querySelectorAll('[data-ru]');
+            translatableElements.forEach(el => {
+                const translation = el.getAttribute('data-' + lang);
+                if (translation) {
+                    if (el.classList.contains('tile-desc') || el.classList.contains('tile-label') || el.classList.contains('system-info-text')) {
+                        el.innerText = translation;
+                    } else if (el.tagName === 'LI' || el.tagName === 'DIV' || el.tagName === 'H1' || el.tagName === 'BUTTON') {
+                        el.innerText = translation;
+                    }
+                }
+            });
+            
+            document.querySelector('#pivot-all .tile-title').innerText = lang === 'ru' ? 'Все софты' : 'All Software';
+            document.querySelector('#pivot-apps .tile-title').innerText = lang === 'ru' ? 'Приложения' : 'Apps';
+            document.querySelector('#pivot-games .tile-title').innerText = lang === 'ru' ? 'Игры' : 'Games';
+            document.querySelector('#pivot-social .tile-title').innerText = lang === 'ru' ? 'Соц сети' : 'Social';
+        }
+
+        // Вызов информации о версии на английском языке
+        function showVersionInfo() {
+            alert("Version: alpha 0.1.0\nDeveloper: Gleb");
+        }
+    </script>
+</body>
+</html>
