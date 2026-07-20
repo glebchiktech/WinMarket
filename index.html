@@ -7,17 +7,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* Базовые сбросы в стиле Metro — строго острые углы (no border-radius) */
         * {
             box-sizing: border-box;
             border-radius: 0 !important;
+            touch-action: manipulation;
         }
 
         body {
-            background-color: #000000; /* Глубокий черный фон Windows Phone */
+            background-color: #000000;
             color: #ffffff;
-            font-family: "Segoe UI", "Segoe WP", "Open Sans", -apple-system, sans-serif;
+            font-family: "Segoe UI", "Open Sans", -apple-system, sans-serif;
             margin: 0;
             padding: 80px 20px 40px 20px;
             overflow-x: hidden;
@@ -34,13 +36,8 @@
             top: 0;
             left: 0;
             z-index: 1000;
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-align: center;
-            -ms-flex-align: center;
-            align-items: center;
-            padding: 0 20px;
+            display: block;
+            padding: 12px 20px;
         }
 
         .menu-btn {
@@ -49,13 +46,11 @@
             color: white;
             font-size: 24px;
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 0 10px;
             margin-right: 15px;
             line-height: 1;
-            transition: background-color 0.1s;
-            user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
+            float: left;
+            outline: none;
         }
 
         .menu-btn:active {
@@ -69,29 +64,22 @@
             text-transform: uppercase;
             cursor: pointer;
             display: inline-block;
-            padding: 5px 10px;
-            user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            transition: color 0.1s ease;
+            padding: 0 10px;
+            color: #ffffff;
+            text-decoration: none;
+            background: none;
+            border: none;
         }
         
         .navbar-brand:hover {
             color: #00aba9;
         }
-        
-        .navbar-brand:active {
-            opacity: 0.7;
-        }
 
         /* Заголовок в стиле Windows Phone "Hub" */
         .hub-header {
             max-width: 1200px;
-            margin: 10px auto 30px auto;
+            margin: 10px auto 20px auto;
             padding-left: 10px;
-            user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
         }
 
         .hub-header .app-label {
@@ -106,10 +94,43 @@
         .hub-header h1 {
             font-size: 58px;
             font-weight: 300;
-            margin: 0;
+            margin: 0 0 15px 0;
             letter-spacing: -1.5px;
             text-transform: lowercase;
             line-height: 1.1;
+        }
+
+        /* Стили Поиска Metro UI */
+        .search-box-container {
+            position: relative;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: #1f1f1f;
+            border: 2px solid #333333;
+            color: #ffffff;
+            padding: 12px 45px 12px 15px;
+            font-size: 16px;
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: #00aba9;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888888;
+            font-size: 18px;
+            pointer-events: none;
         }
 
         /* Выдвижное боковое меню категорий */
@@ -122,24 +143,12 @@
             background-color: #111111;
             border-right: 1px solid #222222;
             z-index: 999;
+            -webkit-transition: left 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
             transition: left 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-orient: vertical;
-            -webkit-box-direction: normal;
-            -ms-flex-direction: column;
-            flex-direction: column;
-            -webkit-box-pack: justify;
-            -ms-flex-pack: justify;
-            justify-content: space-between;
-            user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
         }
 
         .drawer-overlay.open {
-            left: 0;
+            left: 0 !important;
         }
 
         .drawer-menu {
@@ -149,11 +158,16 @@
         }
 
         .drawer-item {
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            color: #ffffff;
             padding: 16px 24px;
             font-size: 18px;
             font-weight: 300;
             cursor: pointer;
-            transition: background-color 0.1s;
+            display: block;
         }
 
         .drawer-item:hover {
@@ -165,11 +179,15 @@
             font-weight: 400;
         }
 
-        /* Блок настроек с новыми элементами */
+        /* Блок настроек */
         .drawer-settings {
             border-top: 1px solid #222222;
             padding: 20px 24px;
             background-color: #151515;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
         }
 
         .settings-title {
@@ -182,17 +200,17 @@
         }
 
         .lang-switch-container {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            gap: 5px;
-            margin-bottom: 15px; /* Отступ перед кнопкой версии */
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        
+        .lang-switch-container::after {
+            content: ""; display: table; clear: both;
         }
 
         .lang-btn {
-            -webkit-box-flex: 1;
-            -ms-flex: 1;
-            flex: 1;
+            width: 50%;
+            float: left;
             background-color: #222222;
             border: 2px solid transparent;
             color: #ffffff;
@@ -201,7 +219,6 @@
             font-weight: 600;
             cursor: pointer;
             text-align: center;
-            transition: background-color 0.1s, border-color 0.1s;
         }
 
         .lang-btn:hover {
@@ -213,7 +230,6 @@
             border-color: #ffffff;
         }
 
-        /* Кнопка "О версии" в стиле системных кнопок Windows Phone */
         .version-btn {
             width: 100%;
             background-color: transparent;
@@ -224,7 +240,6 @@
             font-weight: 400;
             cursor: pointer;
             text-align: center;
-            transition: background-color 0.1s, border-color 0.1s;
         }
 
         .version-btn:hover {
@@ -236,16 +251,63 @@
             border-color: #ffffff;
         }
 
-        /* Контейнер Metro-сетки с поддержкой префиксов IE/Edge */
+        /* Контейнер Metro-сетки */
         .metro-container {
             max-width: 1200px;
             margin: 0 auto;
-            display: -ms-grid;
-            display: grid;
-            -ms-grid-columns: (minmax(140px, 1fr))[auto-fill];
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            grid-auto-rows: 140px;
-            gap: 10px;
+            width: 100%;
+        }
+        
+        .metro-container::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Обертка ячеек сетки */
+        .tile-cell {
+            float: left;
+            width: 50%;
+            padding: 5px;
+            box-sizing: border-box;
+            height: 150px;
+        }
+
+        @media (min-width: 600px) {
+            .tile-cell { width: 33.333%; }
+        }
+        @media (min-width: 900px) {
+            .tile-cell { width: 20%; }
+        }
+        @media (min-width: 1200px) {
+            .tile-cell { width: 14.285%; }
+        }
+
+        .tile-cell.wide {
+            width: 100%;
+        }
+        @media (min-width: 600px) {
+            .tile-cell.wide { width: 66.666%; }
+        }
+        @media (min-width: 900px) {
+            .tile-cell.wide { width: 40%; }
+        }
+        @media (min-width: 1200px) {
+            .tile-cell.wide { width: 28.57%; }
+        }
+
+        .tile-cell.double-size {
+            width: 100%;
+            height: 300px;
+        }
+        @media (min-width: 600px) {
+            .tile-cell.double-size { width: 66.666%; }
+        }
+        @media (min-width: 900px) {
+            .tile-cell.double-size { width: 40%; }
+        }
+        @media (min-width: 1200px) {
+            .tile-cell.double-size { width: 28.57%; }
         }
 
         /* Базовый стиль плитки */
@@ -256,35 +318,25 @@
             padding: 15px;
             cursor: pointer;
             border: 2px solid transparent;
+            -webkit-transition: transform 0.1s ease, border-color 0.1s ease;
             transition: transform 0.1s ease, border-color 0.1s ease;
             overflow: hidden;
-            user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-orient: vertical;
-            -webkit-box-direction: normal;
-            -ms-flex-direction: column;
-            flex-direction: column;
-            -webkit-box-pack: justify;
-            -ms-flex-pack: justify;
-            justify-content: space-between;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            outline: none;
         }
 
         .tile:active {
-            transform: scale(0.96);
             -webkit-transform: scale(0.96);
+            transform: scale(0.96);
         }
 
         .tile:hover {
             border-color: #ffffff;
         }
-
-        /* Размеры плиток */
-        .tile.wide { -ms-grid-column-span: 2; grid-column: span 2; }
-        .tile.double-size { -ms-grid-column-span: 2; grid-column: span 2; -ms-grid-row-span: 2; grid-row: span 2; }
 
         /* Набор цветов Metro UI */
         .tile.green { background-color: #107c41; }
@@ -306,15 +358,20 @@
             margin-top: 5px;
             line-height: 1.3;
             overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
+            max-height: 75px;
         }
 
         .tile-icon {
-            font-size: 32px;
+            font-size: 36px;
             margin-bottom: 10px;
-            font-family: "Segoe UI", sans-serif;
+        }
+
+        .tile-img-icon {
+            width: 36px;
+            height: 36px;
+            margin-bottom: 10px;
+            display: block;
+            object-fit: contain;
         }
 
         .tile-label {
@@ -330,7 +387,6 @@
         /* Плитки-фильтры (Pivot) */
         .filter-tile {
             opacity: 0.6;
-            transition: opacity 0.2s, border-color 0.2s;
         }
 
         .filter-tile.active {
@@ -350,13 +406,67 @@
             z-index: 998;
         }
         .click-shield.open {
-            display: block;
+            display: block !important;
         }
 
         .system-info-text {
             font-size: 11px;
             line-height: 1.4;
             color: #aaa;
+            margin-top: 5px;
+        }
+
+        /* Кастомное модальное окно Windows Phone */
+        .metro-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .metro-modal-box {
+            background: #1f1f1f;
+            border: 2px solid #00aba9;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .metro-modal-title {
+            font-size: 20px;
+            font-weight: 300;
+            color: #00aba9;
+            margin-bottom: 15px;
+            text-transform: lowercase;
+        }
+
+        .metro-modal-body {
+            font-size: 15px;
+            line-height: 1.4;
+            margin-bottom: 20px;
+            white-space: pre-line;
+        }
+
+        .metro-modal-btn {
+            background: #222222;
+            border: 2px solid #555555;
+            color: #ffffff;
+            padding: 8px 25px;
+            cursor: pointer;
+            float: right;
+        }
+
+        .metro-modal-btn:active {
+            background: #00aba9;
+            border-color: #ffffff;
         }
     </style>
 </head>
@@ -364,8 +474,8 @@
 
     <!-- Навигационная панель Windows -->
     <header class="metro-navbar">
-        <button class="menu-btn" onclick="toggleMenu()">☰</button>
-        <span class="navbar-brand" onclick="goHome()">WinMarket</span>
+        <button type="button" class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+        <button type="button" class="navbar-brand" onclick="goHome()">WinMarket</button>
     </header>
 
     <!-- Защитный слой под меню -->
@@ -374,22 +484,21 @@
     <!-- Выдвижная шторка с категориями и настройками -->
     <div class="drawer-overlay" id="drawer">
         <ul class="drawer-menu">
-            <li class="drawer-item active" id="menu-all" onclick="selectCategory('all', this)" data-ru="все категории" data-en="all categories">все категории</li>
-            <li class="drawer-item" id="menu-apps" onclick="selectCategory('apps', this)" data-ru="приложения" data-en="applications">приложения</li>
-            <li class="drawer-item" id="menu-games" onclick="selectCategory('games', this)" data-ru="игры" data-en="games">игры</li>
-            <li class="drawer-item" id="menu-social" onclick="selectCategory('social', this)" data-ru="соц сети" data-en="social networks">соц сети</li>
-            <li class="drawer-item" id="menu-tools" onclick="selectCategory('tools', this)" data-ru="инструменты" data-en="tools">инструменты</li>
+            <li><button type="button" class="drawer-item active" id="menu-all" onclick="selectCategory('all', this)" data-ru="все категории" data-en="all categories">все категории</button></li>
+            <li><button type="button" class="drawer-item" id="menu-apps" onclick="selectCategory('apps', this)" data-ru="приложения" data-en="applications">приложения</button></li>
+            <li><button type="button" class="drawer-item" id="menu-games" onclick="selectCategory('games', this)" data-ru="игры" data-en="games">игры</button></li>
+            <li><button type="button" class="drawer-item" id="menu-social" onclick="selectCategory('social', this)" data-ru="соц сети" data-en="social networks">соц сети</button></li>
+            <li><button type="button" class="drawer-item" id="menu-tools" onclick="selectCategory('tools', this)" data-ru="инструменты" data-en="tools">инструменты</button></li>
         </ul>
         
         <!-- Настройки языка и инфо о версии -->
         <div class="drawer-settings">
             <div class="settings-title" id="settings-lang-title" data-ru="настройки" data-en="settings">настройки</div>
             <div class="lang-switch-container">
-                <button class="lang-btn active" id="lang-ru" onclick="changeLanguage('ru')">RU</button>
-                <button class="lang-btn" id="lang-en" onclick="changeLanguage('en')">EN</button>
+                <button type="button" class="lang-btn active" id="lang-ru" onclick="changeLanguage('ru')">RU</button>
+                <button type="button" class="lang-btn" id="lang-en" onclick="changeLanguage('en')">EN</button>
             </div>
-            <!-- НОВАЯ КНОПКА: О версии -->
-            <button class="version-btn" id="version-btn-text" onclick="showVersionInfo()" data-ru="о версии" data-en="about version">о версии</button>
+            <button type="button" class="version-btn" id="version-btn-text" onclick="showVersionInfo()" data-ru="о версии" data-en="about version">о версии</button>
         </div>
     </div>
 
@@ -397,100 +506,288 @@
     <header class="hub-header">
         <div class="app-label" id="hub-subtitle" data-ru="Магазин софта и развлечений" data-en="Software & Entertainment Store">Магазин софта и развлечений</div>
         <h1 id="hub-title" data-ru="витрина" data-en="showcase">витрина</h1>
+        
+        <!-- Поисковая строка Metro -->
+        <div class="search-box-container">
+            <input type="text" class="search-input" id="search-input" placeholder="поиск приложений..." oninput="searchApps()" data-placeholder-ru="поиск приложений..." data-placeholder-en="search apps...">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        </div>
     </header>
 
     <!-- Сетка плиток Metro UI -->
     <main class="metro-container" id="metro-grid">
         
         <!-- Интерактивные плитки быстрого фильтра (Pivot) -->
-        <div class="tile filter-tile active dark" id="pivot-all" onclick="filterGrid('all', this)">
-            <div class="tile-icon" style="color: #00aba9;">❖</div>
-            <div class="tile-title" data-ru="Все софты" data-en="All Software">Все софты</div>
+        <div class="tile-cell pivot-cell">
+            <button type="button" class="tile filter-tile active dark" id="pivot-all" onclick="filterGrid('all', this)">
+                <div class="tile-icon"><i class="fa-solid fa-border-all" style="color: #00aba9;"></i></div>
+                <div class="tile-title" data-ru="Все софты" data-en="All Software">Все софты</div>
+            </button>
         </div>
 
-        <div class="tile filter-tile dark" id="pivot-apps" onclick="filterGrid('apps', this)">
-            <div class="tile-icon" style="color: #0078d7;">⚃</div>
-            <div class="tile-title" data-ru="Приложения" data-en="Apps">Приложения</div>
+        <div class="tile-cell pivot-cell">
+            <button type="button" class="tile filter-tile dark" id="pivot-apps" onclick="filterGrid('apps', this)">
+                <div class="tile-icon"><i class="fa-solid fa-cubes" style="color: #0078d7;"></i></div>
+                <div class="tile-title" data-ru="Приложения" data-en="Apps">Приложения</div>
+            </button>
         </div>
 
-        <div class="tile filter-tile dark" id="pivot-games" onclick="filterGrid('games', this)">
-            <div class="tile-icon" style="color: #107c41;">🎮</div>
-            <div class="tile-title" data-ru="Игры" data-en="Games">Игры</div>
+        <div class="tile-cell pivot-cell">
+            <button type="button" class="tile filter-tile dark" id="pivot-games" onclick="filterGrid('games', this)">
+                <div class="tile-icon"><i class="fa-solid fa-gamepad" style="color: #107c41;"></i></div>
+                <div class="tile-title" data-ru="Игры" data-en="Games">Игры</div>
+            </button>
         </div>
 
-        <div class="tile filter-tile dark" id="pivot-social" onclick="filterGrid('social', this)">
-            <div class="tile-icon" style="color: #b4009e;">💬</div>
-            <div class="tile-title" data-ru="Соц сети" data-en="Social">Соц сети</div>
+        <div class="tile-cell pivot-cell">
+            <button type="button" class="tile filter-tile dark" id="pivot-social" onclick="filterGrid('social', this)">
+                <div class="tile-icon"><i class="fa-solid fa-comments" style="color: #b4009e;"></i></div>
+                <div class="tile-title" data-ru="Соц сети" data-en="Social">Соц сети</div>
+            </button>
         </div>
 
         <!-- ТОВАРЫ -->
-        <div class="tile double-size blue product-tile" data-cat="social" onclick="window.location.href='https://drive.google.com/file/d/1sCDUaaDEOD4Oxir4ojY1s1cZwE5DQCNA/view?usp=sharing'">
-            <div class="tile-icon">✈</div>
-            <div>
-                <div class="tile-title">Unigram Mobile</div>
-                <div class="tile-desc" data-ru="Быстрый и оптимизированный неофициальный клиент Telegram, созданный специально для Windows 10 Mobile." data-en="Fast and optimized unofficial Telegram client built specifically for Windows 10 Mobile devices.">Быстрый и оптимизированный неофициальный клиент Telegram, созданный специально для Windows 10 Mobile.</div>
+        <div class="tile-cell double-size product-tile" data-cat="games">
+            <div class="tile green">
+                <div class="tile-icon"><i class="fa-solid fa-star"></i></div>
+                <div class="tile-title">Brawl Stars</div>
+                <div class="tile-desc" data-ru="Динамичный мобильный экшен. Сражайтесь, собирайте кубки и прокачивайте бойцов." data-en="Dynamic mobile action. Fight, collect trophies and level up your brawlers.">Динамичный мобильный экшен. Сражайтесь, собирайте кубки и прокачивайте бойцов.</div>
+                <span class="tile-label" data-ru="игра" data-en="game">игра</span>
             </div>
-            <span class="tile-label" data-ru="соц сеть" data-en="social">соц сеть</span>
         </div>
 
-        <div class="tile wide dark">
-            <div class="tile-title" style="color: #00aba9;">WinMarket Catalog</div>
-            <div class="system-info-text" data-ru="Магазин контента адаптирован под строгую CSS Grid разметку плиток без скруглений. Совместимо с мобильными и десктопными экранами." data-en="Content store adapted to strict CSS Grid layouts with sharp edges. Compatible with both mobile and desktop screens.">
-                Магазин контента адаптирован под строгую CSS Grid разметку плиток без скруглений. Совместимо с мобильными и десктопными экранами.
+        <div class="tile-cell wide product-tile" data-cat="tools">
+            <div class="tile orange">
+                <div class="tile-title">Droidmarket</div>
+                <div class="tile-desc" data-ru="Каталог и веб-магазин приложений для классических Android устройств." data-en="App catalog and web store designed for classic Android devices.">Каталог и веб-магазин приложений для классических Android устройств.</div>
+                <span class="tile-label" data-ru="инструмент" data-en="tool">инструмент</span>
+            </div>
+        </div>
+
+        <div class="tile-cell product-tile" data-cat="social">
+            <div class="tile purple">
+                <div class="tile-icon"><i class="fa-solid fa-comment-dots"></i></div>
+                <div class="tile-title" data-ru="ВКонтакте" data-en="VKontakte">ВКонтакте</div>
+                <span class="tile-label" data-ru="соц сеть" data-en="social">соц сеть</span>
+            </div>
+        </div>
+
+        <div class="tile-cell product-tile" data-cat="apps">
+            <div class="tile blue">
+                <div class="tile-icon"><i class="fa-solid fa-radio"></i></div>
+                <div class="tile-title">Intercomm Radio</div>
+                <span class="tile-label" data-ru="приложение" data-en="app">приложение</span>
+            </div>
+        </div>
+
+        <div class="tile-cell wide product-tile" data-cat="games">
+            <div class="tile green">
+                <div class="tile-title">Clash Royale</div>
+                <div class="tile-desc" data-ru="Тактическая карточная стратегия. Собирайте колоды и крушите башни врага." data-en="Tactical card strategy game. Collect decks and destroy enemy towers.">Тактическая карточная стратегия. Собирайте колоды и крушите башни врага.</div>
+                <span class="tile-label" data-ru="игра" data-en="game">игра</span>
+            </div>
+        </div>
+
+        <div class="tile-cell product-tile" data-cat="tools">
+            <div class="tile orange">
+                <div class="tile-icon"><i class="fa-solid fa-bolt"></i></div>
+                <div class="tile-title">WinFlash</div>
+                <span class="tile-label" data-ru="инструмент" data-en="tool">инструмент</span>
+            </div>
+        </div>
+
+        <!-- UNIGRAM MOBILE -->
+        <div class="tile-cell wide product-tile" data-cat="social">
+            <a href="https://drive.google.com/file/d/1sCDUaaDEOD4Oxir4ojY1s1cZwE5DQCNA/view?usp=sharing" target="_blank" class="tile purple">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Telegram_2019_Logo.svg/1280px-Telegram_2019_Logo.svg.png" alt="Unigram Logo" class="tile-img-icon">
+                <div class="tile-title">Unigram Mobile</div>
+                <div class="tile-desc" data-ru="Оптимизированный Telegram клиент для Windows 10 Mobile." data-en="Optimized Telegram client for Windows 10 Mobile.">Оптимизированный Telegram клиент для Windows 10 Mobile.</div>
+                <span class="tile-label" data-ru="соц сеть" data-en="social">соц сеть</span>
+            </a>
+        </div>
+
+        <!-- ЯНДЕКС ПОГОДА -->
+        <div class="tile-cell product-tile" data-cat="apps">
+            <a href="https://drive.google.com/file/d/1cHw43llIjfa9jLkAbdQULaRTFyKNCXBY/view?usp=sharing" target="_blank" class="tile blue">
+                <img src="https://files.winarchive.ru/1747683444_Untitled.png" alt="Яндекс Погода" class="tile-img-icon">
+                <div class="tile-title" data-ru="Яндекс Погода" data-en="Yandex Weather">Яндекс Погода</div>
+                <span class="tile-label" data-ru="приложение" data-en="app">приложение</span>
+            </a>
+        </div>
+
+        <!-- 2GIS -->
+        <div class="tile-cell product-tile" data-cat="tools">
+            <a href="https://drive.google.com/file/d/1RBElJ46cOHWjh1yrAAUGWO8-gDTrTxTx/view?usp=sharing" target="_blank" class="tile green">
+                <img src="https://files.winarchive.ru/1747686076_97b70d4bdf2806c85ecee373be82dd42.jpg" alt="2GIS" class="tile-img-icon">
+                <div class="tile-title">2GIS</div>
+                <span class="tile-label" data-ru="инструмент" data-en="tool">инструмент</span>
+            </a>
+        </div>
+
+        <div class="tile-cell product-tile" data-cat="apps">
+            <div class="tile blue">
+                <div class="tile-icon"><i class="fa-solid fa-linux"></i></div>
+                <div class="tile-title">Zorin Appearance</div>
+                <span class="tile-label" data-ru="приложение" data-en="app">приложение</span>
+            </div>
+        </div>
+
+        <div class="tile-cell wide system-tile">
+            <div class="tile dark">
+                <div class="tile-title" style="color: #00aba9;">WinMarket Catalog</div>
+                <div class="system-info-text" data-ru="Магазин контента адаптирован под строгую разметку плиток без скруглений. Совместимо с мобильными и десктопными экранами." data-en="Content store adapted to strict layouts with sharp edges. Compatible with both mobile and desktop screens.">
+                    Магазин контента адаптирован под строгую разметку плиток без скруглений. Совместимо с мобильными и десктопными экранами.
+                </div>
             </div>
         </div>
 
     </main>
 
+    <!-- Кастомное Metro-окно -->
+    <div class="metro-modal" id="aboutModal">
+        <div class="metro-modal-box">
+            <div class="metro-modal-title" id="modal-title">winmarket</div>
+            <div class="metro-modal-body" id="modal-body"></div>
+            <button type="button" class="metro-modal-btn" onclick="closeVersionInfo()">ОК</button>
+            <div style="clear:both;"></div>
+        </div>
+    </div>
+
     <script>
-        let currentLang = 'ru';
+        var currentLang = 'ru';
+        var currentCategory = 'all';
+
+        /* Функция расчета расстояния Левенштейна (для опечаток и похожих слов) */
+        function levenshteinDistance(a, b) {
+            if (a.length === 0) return b.length;
+            if (b.length === 0) return a.length;
+
+            var matrix = [];
+            for (var i = 0; i <= b.length; i++) {
+                matrix[i] = [i];
+            }
+            for (var j = 0; j <= a.length; j++) {
+                matrix[0][j] = j;
+            }
+
+            for (var i = 1; i <= b.length; i++) {
+                for (var j = 1; j <= a.length; j++) {
+                    if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j - 1] + 1,
+                            Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
+                        );
+                    }
+                }
+            }
+            return matrix[b.length][a.length];
+        }
+
+        /* Алгоритм проверки нечеткого совпадения */
+        function isFuzzyMatch(text, query) {
+            text = text.toLowerCase();
+            query = query.toLowerCase().trim();
+
+            if (!query) return true;
+            if (text.indexOf(query) !== -1) return true; // Прямое совпадение подстроки
+
+            var words = text.split(/\s+/);
+            for (var i = 0; i < words.length; i++) {
+                var word = words[i];
+                var dist = levenshteinDistance(word, query);
+                
+                // Допускаем опечатки в зависимости от длины слова
+                if (query.length <= 3 && dist <= 1) return true;
+                if (query.length > 3 && query.length <= 6 && dist <= 2) return true;
+                if (query.length > 6 && dist <= 3) return true;
+            }
+            return false;
+        }
+
+        /* Функция живого поиска */
+        function searchApps() {
+            var query = document.getElementById('search-input').value;
+            var products = document.querySelectorAll('.product-tile');
+            var pivotCells = document.querySelectorAll('.pivot-cell');
+
+            // Если идет поиск, прячем пивоты для компактности
+            for (var k = 0; k < pivotCells.length; k++) {
+                pivotCells[k].style.display = query.trim() === '' ? 'block' : 'none';
+            }
+
+            for (var j = 0; j < products.length; j++) {
+                var p = products[j];
+                var cat = p.getAttribute('data-cat');
+                var title = p.querySelector('.tile-title') ? p.querySelector('.tile-title').innerText : '';
+                var desc = p.querySelector('.tile-desc') ? p.querySelector('.tile-desc').innerText : '';
+                var label = p.querySelector('.tile-label') ? p.querySelector('.tile-label').innerText : '';
+
+                var fullContent = title + ' ' + desc + ' ' + label;
+                var matchesCategory = (currentCategory === 'all' || cat === currentCategory);
+                var matchesSearch = isFuzzyMatch(fullContent, query);
+
+                if (matchesCategory && matchesSearch) {
+                    p.style.display = 'block';
+                } else {
+                    p.style.display = 'none';
+                }
+            }
+        }
 
         function toggleMenu() {
-            const drawer = document.getElementById('drawer');
-            const shield = document.getElementById('shield');
-            drawer.classList.toggle('open');
-            shield.classList.toggle('open');
+            var drawer = document.getElementById('drawer');
+            var shield = document.getElementById('shield');
+            
+            if (drawer.className.indexOf('open') !== -1) {
+                drawer.className = 'drawer-overlay';
+                shield.className = 'click-shield';
+            } else {
+                drawer.className = 'drawer-overlay open';
+                shield.className = 'click-shield open';
+            }
         }
 
         function goHome() {
-            const items = document.querySelectorAll('.drawer-item');
-            items.forEach(item => item.classList.remove('active'));
-            document.getElementById('menu-all').classList.add('active');
+            document.getElementById('search-input').value = '';
+            var items = document.querySelectorAll('.drawer-item');
+            for (var i = 0; i < items.length; i++) {
+                items[i].className = 'drawer-item';
+            }
+            document.getElementById('menu-all').className = 'drawer-item active';
             
             filterGrid('all', document.getElementById('pivot-all'));
             
-            const drawer = document.getElementById('drawer');
-            if(drawer.classList.contains('open')) {
+            var drawer = document.getElementById('drawer');
+            if (drawer.className.indexOf('open') !== -1) {
                 toggleMenu();
             }
         }
 
         function filterGrid(category, element) {
-            const filters = document.querySelectorAll('.filter-tile');
-            filters.forEach(f => f.classList.remove('active'));
-            if(element) {
-                element.classList.add('active');
+            currentCategory = category;
+            var filters = document.querySelectorAll('.filter-tile');
+            for (var i = 0; i < filters.length; i++) {
+                filters[i].className = 'tile filter-tile dark';
+            }
+            
+            if (element) {
+                element.className = 'tile filter-tile active dark';
             } else {
-                const targetPivot = document.getElementById('pivot-' + category);
-                if (targetPivot) targetPivot.classList.add('active');
+                var targetPivot = document.getElementById('pivot-' + category);
+                if (targetPivot) targetPivot.className = 'tile filter-tile active dark';
             }
 
-            const products = document.querySelectorAll('.product-tile');
-            products.forEach(p => {
-                if (category === 'all' || p.getAttribute('data-cat') === category) {
-                    p.style.display = '-webkit-box';
-                    p.style.display = '-ms-flexbox';
-                    p.style.display = 'flex';
-                } else {
-                    p.style.display = 'none';
-                }
-            });
+            searchApps(); // Фильтруем с учетом текущего поиска
         }
 
         function selectCategory(category, element) {
-            const items = document.querySelectorAll('.drawer-item');
-            items.forEach(item => item.classList.remove('active'));
-            element.classList.add('active');
+            var items = document.querySelectorAll('.drawer-item');
+            for (var i = 0; i < items.length; i++) {
+                items[i].className = 'drawer-item';
+            }
+            element.className = 'drawer-item active';
             
             filterGrid(category, null);
             toggleMenu();
@@ -499,21 +796,21 @@
         function changeLanguage(lang) {
             currentLang = lang;
             
-            document.getElementById('lang-ru').classList.remove('active');
-            document.getElementById('lang-en').classList.remove('active');
-            document.getElementById('lang-' + lang).classList.add('active');
+            document.getElementById('lang-ru').className = 'lang-btn';
+            document.getElementById('lang-en').className = 'lang-btn';
+            document.getElementById('lang-' + lang).className = 'lang-btn active';
 
-            const translatableElements = document.querySelectorAll('[data-ru]');
-            translatableElements.forEach(el => {
-                const translation = el.getAttribute('data-' + lang);
+            var translatableElements = document.querySelectorAll('[data-ru]');
+            for (var i = 0; i < translatableElements.length; i++) {
+                var el = translatableElements[i];
+                var translation = el.getAttribute('data-' + lang);
                 if (translation) {
-                    if (el.classList.contains('tile-desc') || el.classList.contains('tile-label') || el.classList.contains('system-info-text')) {
-                        el.innerText = translation;
-                    } else if (el.tagName === 'LI' || el.tagName === 'DIV' || el.tagName === 'H1' || el.tagName === 'BUTTON') {
-                        el.innerText = translation;
-                    }
+                    el.innerText = translation;
                 }
-            });
+            }
+
+            var input = document.getElementById('search-input');
+            input.placeholder = input.getAttribute('data-placeholder-' + lang);
             
             document.querySelector('#pivot-all .tile-title').innerText = lang === 'ru' ? 'Все софты' : 'All Software';
             document.querySelector('#pivot-apps .tile-title').innerText = lang === 'ru' ? 'Приложения' : 'Apps';
@@ -521,9 +818,20 @@
             document.querySelector('#pivot-social .tile-title').innerText = lang === 'ru' ? 'Соц сети' : 'Social';
         }
 
-        // Вызов информации о версии на английском языке
         function showVersionInfo() {
-            alert("Version: alpha 0.1.0\nDeveloper: Gleb");
+            var modal = document.getElementById('aboutModal');
+            var body = document.getElementById('modal-body');
+            
+            if (currentLang === 'ru') {
+                body.innerText = "Версия: alpha 0.1.0\nРазработчик: Gleb";
+            } else {
+                body.innerText = "Version: alpha 0.1.0\nDeveloper: Gleb";
+            }
+            modal.style.display = 'flex';
+        }
+
+        function closeVersionInfo() {
+            document.getElementById('aboutModal').style.display = 'none';
         }
     </script>
 </body>
