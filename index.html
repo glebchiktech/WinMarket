@@ -51,9 +51,11 @@
             line-height: 1;
             float: left;
             outline: none;
+            transition: transform 0.1s ease;
         }
 
         .menu-btn:active {
+            transform: scale(0.9);
             background-color: #333333;
         }
 
@@ -69,6 +71,7 @@
             text-decoration: none;
             background: none;
             border: none;
+            transition: color 0.2s ease;
         }
         
         .navbar-brand:hover {
@@ -116,11 +119,12 @@
             font-size: 16px;
             outline: none;
             font-family: inherit;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
         }
 
         .search-input:focus {
             border-color: #00aba9;
+            background-color: #000000;
         }
 
         .search-icon {
@@ -143,12 +147,11 @@
             background-color: #111111;
             border-right: 1px solid #222222;
             z-index: 999;
-            -webkit-transition: left 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
-            transition: left 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+            transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
         }
 
         .drawer-overlay.open {
-            left: 0 !important;
+            transform: translateX(270px);
         }
 
         .drawer-menu {
@@ -168,10 +171,12 @@
             font-weight: 300;
             cursor: pointer;
             display: block;
+            transition: background-color 0.15s ease, padding-left 0.2s ease;
         }
 
         .drawer-item:hover {
             background-color: #222222;
+            padding-left: 30px;
         }
 
         .drawer-item.active {
@@ -219,6 +224,7 @@
             font-weight: 600;
             cursor: pointer;
             text-align: center;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
         }
 
         .lang-btn:hover {
@@ -240,6 +246,7 @@
             font-weight: 400;
             cursor: pointer;
             text-align: center;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
         }
 
         .version-btn:hover {
@@ -256,6 +263,7 @@
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
+            perspective: 1000px;
         }
         
         .metro-container::after {
@@ -271,6 +279,16 @@
             padding: 5px;
             box-sizing: border-box;
             height: 150px;
+            opacity: 0;
+            transform: translateY(30px) rotateX(-10deg);
+            animation: wpMetroEntrance 0.4s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes wpMetroEntrance {
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg);
+            }
         }
 
         @media (min-width: 600px) {
@@ -318,8 +336,6 @@
             padding: 15px;
             cursor: pointer;
             border: 2px solid transparent;
-            -webkit-transition: transform 0.1s ease, border-color 0.1s ease;
-            transition: transform 0.1s ease, border-color 0.1s ease;
             overflow: hidden;
             width: 100%;
             height: 100%;
@@ -327,11 +343,12 @@
             display: block;
             text-align: left;
             outline: none;
+            transform-style: preserve-3d;
+            transition: transform 0.12s ease-out, border-color 0.15s ease, opacity 0.2s ease;
         }
 
         .tile:active {
-            -webkit-transform: scale(0.96);
-            transform: scale(0.96);
+            transform: scale(0.95) rotateX(4deg) rotateY(-4deg);
         }
 
         .tile:hover {
@@ -364,6 +381,11 @@
         .tile-icon {
             font-size: 36px;
             margin-bottom: 10px;
+            transition: transform 0.2s ease;
+        }
+
+        .tile:hover .tile-icon {
+            transform: translateY(-2px);
         }
 
         .tile-img-icon {
@@ -372,6 +394,11 @@
             margin-bottom: 10px;
             display: block;
             object-fit: contain;
+            transition: transform 0.2s ease;
+        }
+
+        .tile:hover .tile-img-icon {
+            transform: scale(1.08);
         }
 
         .tile-label {
@@ -387,6 +414,7 @@
         /* Плитки-фильтры (Pivot) */
         .filter-tile {
             opacity: 0.6;
+            transition: opacity 0.2s ease, border-color 0.2s ease, transform 0.12s ease-out;
         }
 
         .filter-tile.active {
@@ -401,12 +429,16 @@
             left: 0;
             width: 100%;
             height: calc(100% - 55px);
-            background: rgba(0,0,0,0.5);
-            display: none;
+            background: rgba(0,0,0,0.6);
+            opacity: 0;
+            pointer-events: none;
             z-index: 998;
+            transition: opacity 0.3s ease;
         }
+        
         .click-shield.open {
-            display: block !important;
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .system-info-text {
@@ -423,12 +455,20 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             z-index: 2000;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .metro-modal.open {
+            opacity: 1;
+            pointer-events: auto;
         }
         
         .metro-modal-box {
@@ -438,6 +478,12 @@
             max-width: 400px;
             padding: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            transform: scale(0.85);
+            transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .metro-modal.open .metro-modal-box {
+            transform: scale(1);
         }
 
         .metro-modal-title {
@@ -462,6 +508,7 @@
             padding: 8px 25px;
             cursor: pointer;
             float: right;
+            transition: background-color 0.2s, border-color 0.2s;
         }
 
         .metro-modal-btn:active {
@@ -546,54 +593,62 @@
             </button>
         </div>
 
-        <!-- ТОВАРЫ -->
-        <div class="tile-cell double-size product-tile" data-cat="games">
-            <div class="tile green">
-                <div class="tile-icon"><i class="fa-solid fa-star"></i></div>
-                <div class="tile-title">Brawl Stars</div>
-                <div class="tile-desc" data-ru="Динамичный мобильный экшен. Сражайтесь, собирайте кубки и прокачивайте бойцов." data-en="Dynamic mobile action. Fight, collect trophies and level up your brawlers.">Динамичный мобильный экшен. Сражайтесь, собирайте кубки и прокачивайте бойцов.</div>
-                <span class="tile-label" data-ru="игра" data-en="game">игра</span>
-            </div>
-        </div>
+        <!-- ТОВАРЫ С ССЫЛКАМИ И ИКОНКАМИ -->
 
-        <div class="tile-cell wide product-tile" data-cat="tools">
-            <div class="tile orange">
-                <div class="tile-title">Droidmarket</div>
-                <div class="tile-desc" data-ru="Каталог и веб-магазин приложений для классических Android устройств." data-en="App catalog and web store designed for classic Android devices.">Каталог и веб-магазин приложений для классических Android устройств.</div>
-                <span class="tile-label" data-ru="инструмент" data-en="tool">инструмент</span>
-            </div>
-        </div>
-
-        <div class="tile-cell product-tile" data-cat="social">
-            <div class="tile purple">
-                <div class="tile-icon"><i class="fa-solid fa-comment-dots"></i></div>
-                <div class="tile-title" data-ru="ВКонтакте" data-en="VKontakte">ВКонтакте</div>
-                <span class="tile-label" data-ru="соц сеть" data-en="social">соц сеть</span>
-            </div>
-        </div>
-
+        <!-- YOUTUBE -->
         <div class="tile-cell product-tile" data-cat="apps">
-            <div class="tile blue">
-                <div class="tile-icon"><i class="fa-solid fa-radio"></i></div>
-                <div class="tile-title">Intercomm Radio</div>
+            <a href="https://drive.google.com/file/d/1fnA2ao1FCqp-4asErjEnhSLj08PtBto0/view?usp=sharing" target="_blank" class="tile orange">
+                <img src="https://files.winarchive.ru/1703_tmpusi0234o_Square150x150Logo.scale-200.png" alt="YouTube" class="tile-img-icon">
+                <div class="tile-title">YouTube</div>
                 <span class="tile-label" data-ru="приложение" data-en="app">приложение</span>
-            </div>
+            </a>
         </div>
 
-        <div class="tile-cell wide product-tile" data-cat="games">
-            <div class="tile green">
-                <div class="tile-title">Clash Royale</div>
-                <div class="tile-desc" data-ru="Тактическая карточная стратегия. Собирайте колоды и крушите башни врага." data-en="Tactical card strategy game. Collect decks and destroy enemy towers.">Тактическая карточная стратегия. Собирайте колоды и крушите башни врага.</div>
+        <!-- TALKING PIERRE -->
+        <div class="tile-cell product-tile" data-cat="games">
+            <a href="https://drive.google.com/file/d/1nFbrOl6dXk_0Tkyw9jkt83F8UxD9WE8Z/view?usp=drive_link" target="_blank" class="tile green">
+                <img src="https://files.winarchive.ru/1754607423_icon.png" alt="Talking Pierre" class="tile-img-icon">
+                <div class="tile-title">Talking Pierre</div>
                 <span class="tile-label" data-ru="игра" data-en="game">игра</span>
-            </div>
+            </a>
         </div>
 
-        <div class="tile-cell product-tile" data-cat="tools">
-            <div class="tile orange">
-                <div class="tile-icon"><i class="fa-solid fa-bolt"></i></div>
-                <div class="tile-title">WinFlash</div>
-                <span class="tile-label" data-ru="инструмент" data-en="tool">инструмент</span>
-            </div>
+        <!-- DOODLE JUMP -->
+        <div class="tile-cell product-tile" data-cat="games">
+            <a href="https://drive.google.com/file/d/1CvGYLBAFvXPZ0Id6PUEzMxDr9VaqqG3j/view?usp=sharing" target="_blank" class="tile green">
+                <img src="https://files.winarchive.ru/1754602893_icon.png" alt="Doodle Jump" class="tile-img-icon">
+                <div class="tile-title">Doodle Jump</div>
+                <span class="tile-label" data-ru="игра" data-en="game">игра</span>
+            </a>
+        </div>
+
+        <!-- KUTEGRAM -->
+        <div class="tile-cell wide product-tile" data-cat="social">
+            <a href="https://drive.google.com/file/d/1ymJZi1Sgq_UaEJAJEZTyFLXeznEyzt4k/view?usp=sharing" target="_blank" class="tile orange">
+                <img src="https://files.winarchive.ru/1754930413_Kutegram.jpg" alt="Kutegram Logo" class="tile-img-icon">
+                <div class="tile-title">Kutegram</div>
+                <div class="tile-desc" data-ru="Кастомный Telegram клиент для операционных систем Windows." data-en="Custom Telegram client for Windows operating systems.">Кастомный Telegram клиент для операционных систем Windows.</div>
+                <span class="tile-label" data-ru="соц сеть" data-en="social">соц сеть</span>
+            </a>
+        </div>
+
+        <!-- ЯНДЕКС МУЗЫКА -->
+        <div class="tile-cell product-tile" data-cat="apps">
+            <a href="https://drive.google.com/file/d/1xzuShCrlhToRIQv-vr_AEkY48eYuHZBh/view?usp=sharing" target="_blank" class="tile blue">
+                <img src="https://files.winarchive.ru/1747683064_Square150x150Logo.devicefamily_xbox_scale_100.png" alt="Яндекс Музыка" class="tile-img-icon">
+                <div class="tile-title" data-ru="Яндекс Музыка" data-en="Yandex Music">Яндекс Музыка</div>
+                <span class="tile-label" data-ru="приложение" data-en="app">приложение</span>
+            </a>
+        </div>
+        
+        <!-- OPENVK -->
+        <div class="tile-cell wide product-tile" data-cat="social">
+            <a href="https://drive.google.com/file/d/1gKFicbMqNuy1SfB9vEn-1c3b8KE-hS81/view?usp=sharing" target="_blank" class="tile purple">
+                <img src="https://files.winarchive.ru/1761918768_34790633.png" alt="OpenVK Logo" class="tile-img-icon">
+                <div class="tile-title">OpenVK</div>
+                <div class="tile-desc" data-ru="Клиент социальной сети OpenVK для мобильных платформ." data-en="OpenVK social network client for mobile platforms.">Клиент социальной сети OpenVK для мобильных платформ.</div>
+                <span class="tile-label" data-ru="соц сеть" data-en="social">соц сеть</span>
+            </a>
         </div>
 
         <!-- UNIGRAM MOBILE -->
@@ -615,6 +670,15 @@
             </a>
         </div>
 
+        <!-- ЯНДЕКС КАРТЫ -->
+        <div class="tile-cell product-tile" data-cat="tools">
+            <a href="https://drive.google.com/file/d/1TLEuH-6B22EFtPzjh0wQR8r4jrTxTOPM/view?usp=sharing" target="_blank" class="tile orange">
+                <img src="https://files.winarchive.ru/1748260281_image_2025_03_31_23_13_17.png" alt="Яндекс Карты" class="tile-img-icon">
+                <div class="tile-title" data-ru="Яндекс Карты" data-en="Yandex Maps">Яндекс Карты</div>
+                <span class="tile-label" data-ru="инструмент" data-en="tool">инструмент</span>
+            </a>
+        </div>
+
         <!-- 2GIS -->
         <div class="tile-cell product-tile" data-cat="tools">
             <a href="https://drive.google.com/file/d/1RBElJ46cOHWjh1yrAAUGWO8-gDTrTxTx/view?usp=sharing" target="_blank" class="tile green">
@@ -622,14 +686,6 @@
                 <div class="tile-title">2GIS</div>
                 <span class="tile-label" data-ru="инструмент" data-en="tool">инструмент</span>
             </a>
-        </div>
-
-        <div class="tile-cell product-tile" data-cat="apps">
-            <div class="tile blue">
-                <div class="tile-icon"><i class="fa-solid fa-linux"></i></div>
-                <div class="tile-title">Zorin Appearance</div>
-                <span class="tile-label" data-ru="приложение" data-en="app">приложение</span>
-            </div>
         </div>
 
         <div class="tile-cell wide system-tile">
@@ -657,18 +713,31 @@
         var currentLang = 'ru';
         var currentCategory = 'all';
 
-        /* Функция расчета расстояния Левенштейна (для опечаток и похожих слов) */
+        function applyStaggeredAnimation() {
+            var visibleCells = document.querySelectorAll('.tile-cell');
+            var delay = 0;
+            for (var i = 0; i < visibleCells.length; i++) {
+                if (visibleCells[i].style.display !== 'none') {
+                    visibleCells[i].style.animation = 'none';
+                    visibleCells[i].offsetHeight;
+                    visibleCells[i].style.animation = 'wpMetroEntrance 0.35s cubic-bezier(0.1, 0.8, 0.2, 1) forwards';
+                    visibleCells[i].style.animationDelay = (delay * 0.04) + 's';
+                    delay++;
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            applyStaggeredAnimation();
+        });
+
         function levenshteinDistance(a, b) {
             if (a.length === 0) return b.length;
             if (b.length === 0) return a.length;
 
             var matrix = [];
-            for (var i = 0; i <= b.length; i++) {
-                matrix[i] = [i];
-            }
-            for (var j = 0; j <= a.length; j++) {
-                matrix[0][j] = j;
-            }
+            for (var i = 0; i <= b.length; i++) { matrix[i] = [i]; }
+            for (var j = 0; j <= a.length; j++) { matrix[0][j] = j; }
 
             for (var i = 1; i <= b.length; i++) {
                 for (var j = 1; j <= a.length; j++) {
@@ -685,20 +754,18 @@
             return matrix[b.length][a.length];
         }
 
-        /* Алгоритм проверки нечеткого совпадения */
         function isFuzzyMatch(text, query) {
             text = text.toLowerCase();
             query = query.toLowerCase().trim();
 
             if (!query) return true;
-            if (text.indexOf(query) !== -1) return true; // Прямое совпадение подстроки
+            if (text.indexOf(query) !== -1) return true;
 
             var words = text.split(/\s+/);
             for (var i = 0; i < words.length; i++) {
                 var word = words[i];
                 var dist = levenshteinDistance(word, query);
                 
-                // Допускаем опечатки в зависимости от длины слова
                 if (query.length <= 3 && dist <= 1) return true;
                 if (query.length > 3 && query.length <= 6 && dist <= 2) return true;
                 if (query.length > 6 && dist <= 3) return true;
@@ -706,13 +773,11 @@
             return false;
         }
 
-        /* Функция живого поиска */
         function searchApps() {
             var query = document.getElementById('search-input').value;
             var products = document.querySelectorAll('.product-tile');
             var pivotCells = document.querySelectorAll('.pivot-cell');
 
-            // Если идет поиск, прячем пивоты для компактности
             for (var k = 0; k < pivotCells.length; k++) {
                 pivotCells[k].style.display = query.trim() === '' ? 'block' : 'none';
             }
@@ -740,12 +805,12 @@
             var drawer = document.getElementById('drawer');
             var shield = document.getElementById('shield');
             
-            if (drawer.className.indexOf('open') !== -1) {
-                drawer.className = 'drawer-overlay';
-                shield.className = 'click-shield';
+            if (drawer.classList.contains('open')) {
+                drawer.classList.remove('open');
+                shield.classList.remove('open');
             } else {
-                drawer.className = 'drawer-overlay open';
-                shield.className = 'click-shield open';
+                drawer.classList.add('open');
+                shield.classList.add('open');
             }
         }
 
@@ -760,7 +825,7 @@
             filterGrid('all', document.getElementById('pivot-all'));
             
             var drawer = document.getElementById('drawer');
-            if (drawer.className.indexOf('open') !== -1) {
+            if (drawer.classList.contains('open')) {
                 toggleMenu();
             }
         }
@@ -779,7 +844,8 @@
                 if (targetPivot) targetPivot.className = 'tile filter-tile active dark';
             }
 
-            searchApps(); // Фильтруем с учетом текущего поиска
+            searchApps();
+            applyStaggeredAnimation();
         }
 
         function selectCategory(category, element) {
@@ -823,15 +889,15 @@
             var body = document.getElementById('modal-body');
             
             if (currentLang === 'ru') {
-                body.innerText = "Версия: alpha 0.1.0\nРазработчик: Gleb";
+                body.innerText = "Версия: alpha 0.5.0\nРазработчик: Gleb";
             } else {
-                body.innerText = "Version: alpha 0.1.0\nDeveloper: Gleb";
+                body.innerText = "Version: Alpha 0.5.0\nDeveloper: Gleb";
             }
-            modal.style.display = 'flex';
+            modal.classList.add('open');
         }
 
         function closeVersionInfo() {
-            document.getElementById('aboutModal').style.display = 'none';
+            document.getElementById('aboutModal').classList.remove('open');
         }
     </script>
 </body>
