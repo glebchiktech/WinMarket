@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WinMarket — Приложения и Игры</title>
+    <title>WinMarket — Windows Store UI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Базовые сбросы в стиле Metro — строго острые углы (no border-radius) */
         * {
             box-sizing: border-box;
             border-radius: 0 !important;
             touch-action: manipulation;
+            user-select: none;
         }
 
         body {
@@ -21,144 +21,354 @@
             color: #ffffff;
             font-family: "Segoe UI", "Open Sans", -apple-system, sans-serif;
             margin: 0;
-            padding: 80px 20px 40px 20px;
+            padding: 0;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Навигационная панель */
+        /* Общие правила анимаций отклика на нажатие (Metro Active Effect) */
+        .featured-card,
+        .download-list-item,
+        .cat-tile,
+        .pivot-header-btn,
+        .menu-btn,
+        .navbar-brand,
+        .drawer-item,
+        .lang-btn,
+        .version-btn,
+        .wp-button-frame,
+        .appbar-circle-btn,
+        .back-btn-wp,
+        .metro-modal-btn {
+            transition: transform 0.1s ease, opacity 0.1s ease, background-color 0.1s ease, color 0.1s ease;
+        }
+
+        .featured-card:active,
+        .download-list-item:active,
+        .cat-tile:active {
+            transform: scale(0.96);
+            opacity: 0.8;
+        }
+
+        .menu-btn:active,
+        .navbar-brand:active,
+        .pivot-header-btn:active,
+        .drawer-item:active,
+        .appbar-circle-btn:active,
+        .back-btn-wp:active {
+            transform: scale(0.92);
+            opacity: 0.6;
+        }
+
+        /* Навигационная панель Windows */
         header.metro-navbar {
             background-color: #000000;
-            height: 55px;
+            height: 50px;
             width: 100%;
-            border-bottom: 1px solid #222222;
             position: fixed;
             top: 0;
             left: 0;
             z-index: 1000;
-            display: block;
-            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            background: #000;
         }
 
         .menu-btn {
             background: none;
             border: none;
             color: white;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
-            padding: 0 10px;
-            margin-right: 15px;
-            line-height: 1;
-            float: left;
+            padding: 5px 10px;
+            margin-right: 10px;
             outline: none;
-            transition: transform 0.1s ease;
-        }
-
-        .menu-btn:active {
-            transform: scale(0.9);
-            background-color: #333333;
         }
 
         .navbar-brand {
-            font-size: 20px;
-            font-weight: 300;
-            letter-spacing: 1px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            cursor: pointer;
-            display: inline-block;
-            padding: 0 10px;
-            color: #ffffff;
-            text-decoration: none;
+            color: #888888;
             background: none;
             border: none;
-            transition: color 0.2s ease;
-        }
-        
-        .navbar-brand:hover {
-            color: #00aba9;
+            cursor: pointer;
         }
 
-        /* Заголовок в стиле Windows Phone "Hub" */
-        .hub-header {
-            max-width: 1200px;
-            margin: 10px auto 20px auto;
-            padding-left: 10px;
+        /* WP8 Pivot Panorama Layout */
+        .wp-pivot-container {
+            padding-top: 50px;
+            padding-bottom: 70px;
+            width: 100vw;
+            overflow-x: hidden;
         }
 
-        .hub-header .app-label {
+        .wp-main-title {
             font-size: 13px;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            color: #00aba9;
-            font-weight: 600;
-            margin-bottom: 5px;
+            letter-spacing: 2px;
+            color: #ffffff;
+            padding: 10px 20px 0 20px;
+            font-weight: 400;
         }
 
-        .hub-header h1 {
-            font-size: 58px;
+        /* Pivot Headers (Горизонтальная прокрутка) */
+        .pivot-headers-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
+            padding: 0 20px 15px 20px;
+        }
+        .pivot-headers-wrapper::-webkit-scrollbar { display: none; }
+
+        .pivot-header-btn {
+            background: none;
+            border: none;
+            color: #666666;
+            font-size: 45px;
             font-weight: 300;
-            margin: 0 0 15px 0;
-            letter-spacing: -1.5px;
             text-transform: lowercase;
-            line-height: 1.1;
+            margin-right: 25px;
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.2s ease, transform 0.1s ease;
+            font-family: "Segoe UI Light", "Open Sans", sans-serif;
         }
 
-        /* Стили Поиска Metro UI */
+        .pivot-header-btn.active {
+            color: #ffffff;
+        }
+
+        /* Поисковая строка */
         .search-box-container {
             position: relative;
-            max-width: 500px;
-            margin-bottom: 20px;
+            margin: 0 20px 20px 20px;
+            max-width: 600px;
+            display: none;
         }
+        .search-box-container.visible { display: block; }
 
         .search-input {
             width: 100%;
-            background-color: #1f1f1f;
-            border: 2px solid #333333;
-            color: #ffffff;
-            padding: 12px 45px 12px 15px;
-            font-size: 16px;
+            background-color: #ffffff;
+            border: 2px solid #ffffff;
+            color: #000000;
+            padding: 10px 40px 10px 12px;
+            font-size: 15px;
             outline: none;
             font-family: inherit;
-            transition: border-color 0.2s ease, background-color 0.2s ease;
-        }
-
-        .search-input:focus {
-            border-color: #00aba9;
-            background-color: #000000;
+            font-weight: 600;
         }
 
         .search-icon {
             position: absolute;
-            right: 15px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: #888888;
-            font-size: 18px;
+            color: #000000;
+            font-size: 16px;
             pointer-events: none;
         }
 
-        /* Выдвижное боковое меню категорий */
-        .drawer-overlay {
-            position: fixed;
-            top: 55px;
-            left: -270px;
-            width: 260px;
-            height: calc(100% - 55px);
-            background-color: #111111;
-            border-right: 1px solid #222222;
-            z-index: 999;
+        /* Pivot Sections Container */
+        .pivot-content-slider {
+            display: flex;
+            width: 300vw;
             transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
         }
 
-        .drawer-overlay.open {
-            transform: translateX(270px);
+        .pivot-page {
+            width: 100vw;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
 
-        .drawer-menu {
-            list-style: none;
-            padding: 10px 0;
-            margin: 0;
+        /* Карточки Витрины */
+        .featured-card {
+            display: flex;
+            background: #000000;
+            margin-bottom: 25px;
+            text-decoration: none;
+            color: white;
+            align-items: flex-start;
+            cursor: pointer;
         }
+
+        .featured-img-box {
+            width: 110px;
+            height: 110px;
+            background-color: #00aba9;
+            flex-shrink: 0;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .featured-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .featured-info {
+            flex-grow: 1;
+        }
+
+        .featured-title {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 2px;
+            line-height: 1.1;
+        }
+
+        .featured-price {
+            font-size: 13px;
+            color: #aaaaaa;
+            margin-bottom: 6px;
+        }
+
+        .rating-stars {
+            color: #ffffff;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .rating-stars .far { color: #555555; }
+
+        .featured-desc {
+            font-size: 12px;
+            color: #888888;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .section-label-wp {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #666666;
+            margin: 20px 0 15px 0;
+            font-weight: 600;
+        }
+
+        /* Список скачиваний / приложений */
+        .download-list-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 18px;
+            text-decoration: none;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .download-tile-icon {
+            width: 55px;
+            height: 55px;
+            background: #0078d7;
+            margin-right: 15px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .download-tile-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .download-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .download-name {
+            font-size: 22px;
+            font-weight: 300;
+            line-height: 1.2;
+        }
+
+        .download-status {
+            font-size: 13px;
+            color: #888888;
+            text-transform: lowercase;
+        }
+
+        .wp-button-frame {
+            background: transparent;
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            padding: 8px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            margin-right: 10px;
+            text-transform: lowercase;
+            outline: none;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .wp-button-frame:active {
+            background: #ffffff !important;
+            color: #000000 !important;
+            transform: scale(0.95);
+        }
+
+        /* Категории Tile Grid */
+        .category-tiles-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        @media(min-width: 600px) {
+            .category-tiles-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        .cat-tile {
+            height: 100px;
+            background: #00aba9;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: white;
+            cursor: pointer;
+            border: none;
+            text-align: left;
+        }
+        .cat-tile.blue { background: #0078d7; }
+        .cat-tile.purple { background: #b4009e; }
+        .cat-tile.orange { background: #d83b01; }
+        .cat-tile.green { background: #107c41; }
+
+        .cat-tile i { font-size: 24px; }
+        .cat-tile span { font-size: 16px; font-weight: 300; text-transform: lowercase; }
+
+        /* Выдвижное боковое меню */
+        .drawer-overlay {
+            position: fixed;
+            top: 50px;
+            left: -270px;
+            width: 260px;
+            height: calc(100% - 50px);
+            background-color: #111111;
+            border-right: 1px solid #222222;
+            z-index: 1001;
+            transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .drawer-overlay.open { transform: translateX(270px); }
+
+        .drawer-menu { list-style: none; padding: 10px 0; margin: 0; }
 
         .drawer-item {
             width: 100%;
@@ -171,20 +381,9 @@
             font-weight: 300;
             cursor: pointer;
             display: block;
-            transition: background-color 0.15s ease, padding-left 0.2s ease;
         }
+        .drawer-item.active { background-color: #00aba9; }
 
-        .drawer-item:hover {
-            background-color: #222222;
-            padding-left: 30px;
-        }
-
-        .drawer-item.active {
-            background-color: #00aba9;
-            font-weight: 400;
-        }
-
-        /* Блок настроек */
         .drawer-settings {
             border-top: 1px solid #222222;
             padding: 20px 24px;
@@ -195,46 +394,20 @@
             width: 100%;
         }
 
-        .settings-title {
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #888888;
-            margin-bottom: 12px;
-            font-weight: 600;
-        }
-
-        .lang-switch-container {
-            width: 100%;
-            margin-bottom: 15px;
-        }
-        
-        .lang-switch-container::after {
-            content: ""; display: table; clear: both;
-        }
-
         .lang-btn {
             width: 50%;
             float: left;
             background-color: #222222;
-            border: 2px solid transparent;
+            border: none;
             color: #ffffff;
             padding: 8px 0;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             text-align: center;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
         }
-
-        .lang-btn:hover {
-            border-color: #555555;
-        }
-
-        .lang-btn.active {
-            background-color: #00aba9;
-            border-color: #ffffff;
-        }
+        .lang-btn.active { background-color: #00aba9; }
+        .lang-btn:active { transform: scale(0.95); opacity: 0.8; }
 
         .version-btn {
             width: 100%;
@@ -243,466 +416,495 @@
             color: #ffffff;
             padding: 8px 0;
             font-size: 14px;
-            font-weight: 400;
+            margin-top: 15px;
             cursor: pointer;
-            text-align: center;
-            transition: border-color 0.2s ease, background-color 0.2s ease;
         }
-
-        .version-btn:hover {
-            border-color: #ffffff;
-        }
-
         .version-btn:active {
-            background-color: #00aba9;
-            border-color: #ffffff;
+            background-color: #ffffff;
+            color: #000000;
+            transform: scale(0.95);
         }
 
-        /* Контейнер Metro-сетки */
-        .metro-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-            perspective: 1000px;
-        }
-        
-        .metro-container::after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-
-        /* Обертка ячеек сетки */
-        .tile-cell {
-            float: left;
-            width: 50%;
-            padding: 5px;
-            box-sizing: border-box;
-            height: 150px;
-            opacity: 0;
-            transform: translateY(30px) rotateX(-10deg);
-            animation: wpMetroEntrance 0.4s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
-        }
-
-        @keyframes wpMetroEntrance {
-            to {
-                opacity: 1;
-                transform: translateY(0) rotateX(0deg);
-            }
-        }
-
-        @media (min-width: 600px) {
-            .tile-cell { width: 33.333%; }
-        }
-        @media (min-width: 900px) {
-            .tile-cell { width: 20%; }
-        }
-        @media (min-width: 1200px) {
-            .tile-cell { width: 14.285%; }
-        }
-
-        .tile-cell.wide {
-            width: 100%;
-        }
-        @media (min-width: 600px) {
-            .tile-cell.wide { width: 66.666%; }
-        }
-        @media (min-width: 900px) {
-            .tile-cell.wide { width: 40%; }
-        }
-        @media (min-width: 1200px) {
-            .tile-cell.wide { width: 28.57%; }
-        }
-
-        .tile-cell.double-size {
-            width: 100%;
-            height: 300px;
-        }
-        @media (min-width: 600px) {
-            .tile-cell.double-size { width: 66.666%; }
-        }
-        @media (min-width: 900px) {
-            .tile-cell.double-size { width: 40%; }
-        }
-        @media (min-width: 1200px) {
-            .tile-cell.double-size { width: 28.57%; }
-        }
-
-        /* Базовый стиль плитки */
-        .tile {
-            position: relative;
-            background-color: #00aba9;
-            color: #ffffff;
-            padding: 15px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            text-decoration: none;
-            display: block;
-            text-align: left;
-            outline: none;
-            transform-style: preserve-3d;
-            transition: transform 0.12s ease-out, border-color 0.15s ease, opacity 0.2s ease;
-        }
-
-        .tile:active {
-            transform: scale(0.95) rotateX(4deg) rotateY(-4deg);
-        }
-
-        .tile:hover {
-            border-color: #ffffff;
-        }
-
-        /* Набор цветов Metro UI */
-        .tile.green { background-color: #107c41; }
-        .tile.purple { background-color: #b4009e; }
-        .tile.orange { background-color: #d83b01; }
-        .tile.blue { background-color: #0078d7; }
-        .tile.dark { background-color: #1d1d1d; }
-
-        /* Внутреннее содержимое плиток */
-        .tile-title {
-            font-size: 18px;
-            font-weight: 600;
-            line-height: 1.2;
-        }
-
-        .tile-desc {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.8);
-            margin-top: 5px;
-            line-height: 1.3;
-            overflow: hidden;
-            max-height: 75px;
-        }
-
-        .tile-icon {
-            font-size: 36px;
-            margin-bottom: 10px;
-            transition: transform 0.2s ease;
-        }
-
-        .tile:hover .tile-icon {
-            transform: translateY(-2px);
-        }
-
-        .tile-img-icon {
-            width: 36px;
-            height: 36px;
-            margin-bottom: 10px;
-            display: block;
-            object-fit: contain;
-            transition: transform 0.2s ease;
-        }
-
-        .tile:hover .tile-img-icon {
-            transform: scale(1.08);
-        }
-
-        .tile-label {
-            position: absolute;
-            bottom: 10px;
-            left: 15px;
-            font-size: 11px;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.6);
-            text-transform: lowercase;
-        }
-
-        /* Плитки-фильтры (Pivot) */
-        .filter-tile {
-            opacity: 0.6;
-            transition: opacity 0.2s ease, border-color 0.2s ease, transform 0.12s ease-out;
-        }
-
-        .filter-tile.active {
-            opacity: 1;
-            border: 2px solid #ffffff;
-        }
-
-        /* Экранный шилд */
-        .click-shield {
+        /* Нижний App Bar */
+        .wp-appbar {
             position: fixed;
-            top: 55px;
+            bottom: 0;
             left: 0;
             width: 100%;
-            height: calc(100% - 55px);
+            height: 50px;
+            background-color: #1f1f1f;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 15px;
+            border-top: 1px solid #333333;
+        }
+
+        .appbar-circle-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50% !important;
+            border: 2px solid #ffffff;
+            background: transparent;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            margin-left: 12px;
+            cursor: pointer;
+        }
+
+        .click-shield {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 50px);
             background: rgba(0,0,0,0.6);
             opacity: 0;
             pointer-events: none;
             z-index: 998;
             transition: opacity 0.3s ease;
         }
-        
-        .click-shield.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .click-shield.open { opacity: 1; pointer-events: auto; }
 
-        .system-info-text {
-            font-size: 11px;
-            line-height: 1.4;
-            color: #aaa;
-            margin-top: 5px;
-        }
-
-        /* Кастомное модальное окно Windows Phone */
-        .metro-modal {
+        /* ЭКРАН ДЕТАЛЕЙ ПРИЛОЖЕНИЯ (Выезжает слева с анимацией) */
+        .app-details-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
+            top: 50px;
+            left: -100vw;
+            width: 100vw;
+            height: calc(100vh - 100px);
+            background-color: #000000;
+            z-index: 1050;
+            overflow-y: auto;
+            padding: 20px;
+            transition: transform 0.35s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .app-details-overlay.open {
+            transform: translateX(100vw);
+        }
+
+        .details-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .details-icon {
+            width: 90px;
+            height: 90px;
+            background-color: #0078d7;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .details-icon img {
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 2000;
+            object-fit: cover;
+        }
+
+        .details-meta {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            padding: 20px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
         }
 
-        .metro-modal.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        .metro-modal-box {
-            background: #1f1f1f;
-            border: 2px solid #00aba9;
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-            transform: scale(0.85);
-            transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
-        }
-
-        .metro-modal.open .metro-modal-box {
-            transform: scale(1);
-        }
-
-        .metro-modal-title {
-            font-size: 20px;
+        .details-title {
+            font-size: 28px;
             font-weight: 300;
-            color: #00aba9;
-            margin-bottom: 15px;
-            text-transform: lowercase;
+            line-height: 1.1;
+            margin-bottom: 4px;
         }
 
-        .metro-modal-body {
-            font-size: 15px;
-            line-height: 1.4;
-            margin-bottom: 20px;
+        .details-developer {
+            font-size: 14px;
+            color: #00aba9;
+            margin-bottom: 12px;
+        }
+
+        .details-screenshots-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            margin: 20px 0;
+            padding-bottom: 10px;
+            scrollbar-width: none;
+        }
+        .details-screenshots-scroll::-webkit-scrollbar { display: none; }
+
+        .details-screenshot-item {
+            width: 160px;
+            height: 260px;
+            background-color: #1f1f1f;
+            flex-shrink: 0;
+            border: 1px solid #333333;
+        }
+
+        .details-screenshot-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .details-description-text {
+            font-size: 14px;
+            color: #cccccc;
+            line-height: 1.5;
+            margin-top: 15px;
             white-space: pre-line;
         }
 
-        .metro-modal-btn {
-            background: #222222;
-            border: 2px solid #555555;
+        .back-btn-wp {
+            background: none;
+            border: none;
             color: #ffffff;
-            padding: 8px 25px;
+            font-size: 16px;
             cursor: pointer;
-            float: right;
-            transition: background-color 0.2s, border-color 0.2s;
+            padding: 0;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .metro-modal-btn:active {
-            background: #00aba9;
-            border-color: #ffffff;
+        /* Модалка о версии */
+        .metro-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000;
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.2s ease;
         }
+        .metro-modal.open { opacity: 1; pointer-events: auto; }
+
+        .metro-modal-box {
+            background: #1f1f1f;
+            border: 2px solid #00aba9;
+            width: 100%; max-width: 400px; padding: 20px;
+        }
+        .metro-modal-title { font-size: 20px; font-weight: 300; color: #00aba9; margin-bottom: 15px; }
+        .metro-modal-body { font-size: 15px; line-height: 1.4; margin-bottom: 20px; white-space: pre-line; }
+        .metro-modal-btn { background: #222222; border: 2px solid #555555; color: #ffffff; padding: 8px 25px; cursor: pointer; float: right; }
+        .metro-modal-btn:active { background: #00aba9; color: #ffffff; transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-    <!-- Навигационная панель Windows -->
+    <!-- Верхняя узкая панель -->
     <header class="metro-navbar">
         <button type="button" class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
         <button type="button" class="navbar-brand" onclick="goHome()">WinMarket</button>
     </header>
 
-    <!-- Защитный слой под меню -->
     <div class="click-shield" id="shield" onclick="toggleMenu()"></div>
 
-    <!-- Выдвижная шторка с категориями и настройками -->
+    <!-- Выдвижное меню -->
     <div class="drawer-overlay" id="drawer">
         <ul class="drawer-menu">
-            <li><button type="button" class="drawer-item active" id="menu-all" onclick="selectCategory('all', this)" data-ru="все категории" data-en="all categories">все категории</button></li>
-            <li><button type="button" class="drawer-item" id="menu-apps" onclick="selectCategory('apps', this)" data-ru="приложения" data-en="applications">приложения</button></li>
+            <li><button type="button" class="drawer-item active" id="menu-all" onclick="selectCategory('all', this)" data-ru="все приложения" data-en="all applications">все приложения</button></li>
+            <li><button type="button" class="drawer-item" id="menu-apps" onclick="selectCategory('apps', this)" data-ru="приложения" data-en="apps">приложения</button></li>
             <li><button type="button" class="drawer-item" id="menu-games" onclick="selectCategory('games', this)" data-ru="игры" data-en="games">игры</button></li>
             <li><button type="button" class="drawer-item" id="menu-social" onclick="selectCategory('social', this)" data-ru="соц сети" data-en="social networks">соц сети</button></li>
-            <li><button type="button" class="drawer-item" id="menu-tools" onclick="selectCategory('tools', this)" data-ru="инструменты" data-en="tools">инструменты</button></li>
+            <li><button type="button" class="drawer-item" id="menu-tools" onclick="selectCategory('tools', this)" data-ru="инструменты" data-en="tools">tools</button></li>
         </ul>
         
-        <!-- Настройки языка и инфо о версии -->
         <div class="drawer-settings">
-            <div class="settings-title" id="settings-lang-title" data-ru="настройки" data-en="settings">настройки</div>
-            <div class="lang-switch-container">
+            <div style="font-size:12px; color:#888; margin-bottom:10px; text-transform:uppercase;" data-ru="настройки" data-en="settings">настройки</div>
+            <div style="clear:both; overflow:hidden;">
                 <button type="button" class="lang-btn active" id="lang-ru" onclick="changeLanguage('ru')">RU</button>
                 <button type="button" class="lang-btn" id="lang-en" onclick="changeLanguage('en')">EN</button>
             </div>
-            <button type="button" class="version-btn" id="version-btn-text" onclick="showVersionInfo()" data-ru="о версии" data-en="about version">о версии</button>
+            <button type="button" class="version-btn" onclick="showVersionInfo()" data-ru="о версии" data-en="about version">о версии</button>
         </div>
     </div>
 
-    <!-- Шапка Windows Hub -->
-    <header class="hub-header">
-        <div class="app-label" id="hub-subtitle" data-ru="Магазин софта и развлечений" data-en="Software & Entertainment Store">Магазин софта и развлечений</div>
-        <h1 id="hub-title" data-ru="витрина" data-en="showcase">витрина</h1>
+    <!-- ВЫЕЗЖАЮЩИЙ СЛЕВА ЭКРАН ПОДРОБНОСТЕЙ О ПРИЛОЖЕНИИ -->
+    <div class="app-details-overlay" id="app-details-screen">
+        <button type="button" class="back-btn-wp" onclick="closeAppDetails()">
+            <i class="fa-solid fa-arrow-left"></i> <span data-ru="назад" data-en="back">назад</span>
+        </button>
+
+        <div class="details-header">
+            <div class="details-icon" id="det-icon-box">
+                <img id="det-icon" src="" alt="">
+            </div>
+            <div class="details-meta">
+                <div class="details-title" id="det-title">Название</div>
+                <div class="details-developer" id="det-developer">Разработчик</div>
+                <a id="det-download-btn" href="#" target="_blank" class="wp-button-frame" style="margin: 0; padding: 6px 18px;" onclick="onDownloadClick()" data-ru="скачать" data-en="download">скачать</a>
+            </div>
+        </div>
+
+        <div class="section-label-wp" data-ru="обзор" data-en="overview">обзор</div>
+
+        <!-- 3 скриншота -->
+        <div class="details-screenshots-scroll">
+            <div class="details-screenshot-item"><img id="det-shot-1" src="" alt="скриншот 1"></div>
+            <div class="details-screenshot-item"><img id="det-shot-2" src="" alt="скриншот 2"></div>
+            <div class="details-screenshot-item"><img id="det-shot-3" src="" alt="скриншот 3"></div>
+        </div>
+
+        <div class="section-label-wp" data-ru="описание" data-en="description">описание</div>
+        <div class="details-description-text" id="det-desc"></div>
+    </div>
+
+    <!-- Контейнер WP8 Pivot -->
+    <main class="wp-pivot-container">
         
-        <!-- Поисковая строка Metro -->
-        <div class="search-box-container">
-            <input type="text" class="search-input" id="search-input" placeholder="поиск приложений..." oninput="searchApps()" data-placeholder-ru="поиск приложений..." data-placeholder-en="search apps...">
+        <div class="wp-main-title" id="main-store-label" data-ru="магазин" data-en="store">магазин</div>
+
+        <!-- Горизонтальные заголовки секций -->
+        <div class="pivot-headers-wrapper">
+            <button type="button" class="pivot-header-btn active" onclick="switchPivot(0)" id="p-hdr-0" data-ru="витрина" data-en="featured">витрина</button>
+            <button type="button" class="pivot-header-btn" onclick="switchPivot(1)" id="p-hdr-1" data-ru="скачивания" data-en="downloads">скачивания</button>
+            <button type="button" class="pivot-header-btn" onclick="switchPivot(2)" id="p-hdr-2" data-ru="категории" data-en="categories">категории</button>
+        </div>
+
+        <!-- Строка Поиска -->
+        <div class="search-box-container" id="search-box">
+            <input type="text" class="search-input" id="search-input" placeholder="поиск в магазине..." oninput="searchApps()" data-placeholder-ru="поиск в магазине..." data-placeholder-en="search store...">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
         </div>
-    </header>
 
-    <!-- Сетка плиток Metro UI -->
-    <main class="metro-container" id="metro-grid">
-        
-        <!-- Интерактивные плитки быстрого фильтра (Pivot) -->
-        <div class="tile-cell pivot-cell">
-            <button type="button" class="tile filter-tile active dark" id="pivot-all" onclick="filterGrid('all', this)">
-                <div class="tile-icon"><i class="fa-solid fa-border-all" style="color: #00aba9;"></i></div>
-                <div class="tile-title" data-ru="Все софты" data-en="All Software">Все софты</div>
-            </button>
-        </div>
-
-        <div class="tile-cell pivot-cell">
-            <button type="button" class="tile filter-tile dark" id="pivot-apps" onclick="filterGrid('apps', this)">
-                <div class="tile-icon"><i class="fa-solid fa-cubes" style="color: #0078d7;"></i></div>
-                <div class="tile-title" data-ru="Приложения" data-en="Apps">Приложения</div>
-            </button>
-        </div>
-
-        <div class="tile-cell pivot-cell">
-            <button type="button" class="tile filter-tile dark" id="pivot-games" onclick="filterGrid('games', this)">
-                <div class="tile-icon"><i class="fa-solid fa-gamepad" style="color: #107c41;"></i></div>
-                <div class="tile-title" data-ru="Игры" data-en="Games">Игры</div>
-            </button>
-        </div>
-
-        <div class="tile-cell pivot-cell">
-            <button type="button" class="tile filter-tile dark" id="pivot-social" onclick="filterGrid('social', this)">
-                <div class="tile-icon"><i class="fa-solid fa-comments" style="color: #b4009e;"></i></div>
-                <div class="tile-title" data-ru="Соц сети" data-en="Social">Соц сети</div>
-            </button>
-        </div>
-
-        <!-- ТОВАРЫ С ССЫЛКАМИ И ИКОНКАМИ -->
-
-        <!-- YOUTUBE -->
-        <div class="tile-cell product-tile" data-cat="apps">
-            <a href="https://drive.google.com/file/d/1fnA2ao1FCqp-4asErjEnhSLj08PtBto0/view?usp=sharing" target="_blank" class="tile orange">
-                <img src="https://files.winarchive.ru/1703_tmpusi0234o_Square150x150Logo.scale-200.png" alt="YouTube" class="tile-img-icon">
-                <div class="tile-title">YouTube</div>
-                <span class="tile-label" data-ru="приложение" data-en="app">приложение</span>
-            </a>
-        </div>
-
-        <!-- TALKING PIERRE -->
-        <div class="tile-cell product-tile" data-cat="games">
-            <a href="https://drive.google.com/file/d/1nFbrOl6dXk_0Tkyw9jkt83F8UxD9WE8Z/view?usp=drive_link" target="_blank" class="tile green">
-                <img src="https://files.winarchive.ru/1754607423_icon.png" alt="Talking Pierre" class="tile-img-icon">
-                <div class="tile-title">Talking Pierre</div>
-                <span class="tile-label" data-ru="игра" data-en="game">игра</span>
-            </a>
-        </div>
-
-        <!-- DOODLE JUMP -->
-        <div class="tile-cell product-tile" data-cat="games">
-            <a href="https://drive.google.com/file/d/1CvGYLBAFvXPZ0Id6PUEzMxDr9VaqqG3j/view?usp=sharing" target="_blank" class="tile green">
-                <img src="https://files.winarchive.ru/1754602893_icon.png" alt="Doodle Jump" class="tile-img-icon">
-                <div class="tile-title">Doodle Jump</div>
-                <span class="tile-label" data-ru="игра" data-en="game">игра</span>
-            </a>
-        </div>
-
-        <!-- KUTEGRAM -->
-        <div class="tile-cell wide product-tile" data-cat="social">
-            <a href="https://drive.google.com/file/d/1ymJZi1Sgq_UaEJAJEZTyFLXeznEyzt4k/view?usp=sharing" target="_blank" class="tile orange">
-                <img src="https://files.winarchive.ru/1754930413_Kutegram.jpg" alt="Kutegram Logo" class="tile-img-icon">
-                <div class="tile-title">Kutegram</div>
-                <div class="tile-desc" data-ru="Кастомный Telegram клиент для операционных систем Windows." data-en="Custom Telegram client for Windows operating systems.">Кастомный Telegram клиент для операционных систем Windows.</div>
-                <span class="tile-label" data-ru="соц сеть" data-en="social">соц сеть</span>
-            </a>
-        </div>
-
-        <!-- ЯНДЕКС МУЗЫКА -->
-        <div class="tile-cell product-tile" data-cat="apps">
-            <a href="https://drive.google.com/file/d/1xzuShCrlhToRIQv-vr_AEkY48eYuHZBh/view?usp=sharing" target="_blank" class="tile blue">
-                <img src="https://files.winarchive.ru/1747683064_Square150x150Logo.devicefamily_xbox_scale_100.png" alt="Яндекс Музыка" class="tile-img-icon">
-                <div class="tile-title" data-ru="Яндекс Музыка" data-en="Yandex Music">Яндекс Музыка</div>
-                <span class="tile-label" data-ru="приложение" data-en="app">приложение</span>
-            </a>
-        </div>
-        
-        <!-- OPENVK -->
-        <div class="tile-cell wide product-tile" data-cat="social">
-            <a href="https://drive.google.com/file/d/1gKFicbMqNuy1SfB9vEn-1c3b8KE-hS81/view?usp=sharing" target="_blank" class="tile purple">
-                <img src="https://files.winarchive.ru/1761918768_34790633.png" alt="OpenVK Logo" class="tile-img-icon">
-                <div class="tile-title">OpenVK</div>
-                <div class="tile-desc" data-ru="Клиент социальной сети OpenVK для мобильных платформ." data-en="OpenVK social network client for mobile platforms.">Клиент социальной сети OpenVK для мобильных платформ.</div>
-                <span class="tile-label" data-ru="соц сеть" data-en="social">соц сеть</span>
-            </a>
-        </div>
-
-        <!-- UNIGRAM MOBILE -->
-        <div class="tile-cell wide product-tile" data-cat="social">
-            <a href="https://drive.google.com/file/d/1sCDUaaDEOD4Oxir4ojY1s1cZwE5DQCNA/view?usp=sharing" target="_blank" class="tile purple">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Telegram_2019_Logo.svg/1280px-Telegram_2019_Logo.svg.png" alt="Unigram Logo" class="tile-img-icon">
-                <div class="tile-title">Unigram Mobile</div>
-                <div class="tile-desc" data-ru="Оптимизированный Telegram клиент для Windows 10 Mobile." data-en="Optimized Telegram client for Windows 10 Mobile.">Оптимизированный Telegram клиент для Windows 10 Mobile.</div>
-                <span class="tile-label" data-ru="соц сеть" data-en="social">соц сеть</span>
-            </a>
-        </div>
-
-        <!-- ЯНДЕКС ПОГОДА -->
-        <div class="tile-cell product-tile" data-cat="apps">
-            <a href="https://drive.google.com/file/d/1cHw43llIjfa9jLkAbdQULaRTFyKNCXBY/view?usp=sharing" target="_blank" class="tile blue">
-                <img src="https://files.winarchive.ru/1747683444_Untitled.png" alt="Яндекс Погода" class="tile-img-icon">
-                <div class="tile-title" data-ru="Яндекс Погода" data-en="Yandex Weather">Яндекс Погода</div>
-                <span class="tile-label" data-ru="приложение" data-en="app">приложение</span>
-            </a>
-        </div>
-
-        <!-- ЯНДЕКС КАРТЫ -->
-        <div class="tile-cell product-tile" data-cat="tools">
-            <a href="https://drive.google.com/file/d/1TLEuH-6B22EFtPzjh0wQR8r4jrTxTOPM/view?usp=sharing" target="_blank" class="tile orange">
-                <img src="https://files.winarchive.ru/1748260281_image_2025_03_31_23_13_17.png" alt="Яндекс Карты" class="tile-img-icon">
-                <div class="tile-title" data-ru="Яндекс Карты" data-en="Yandex Maps">Яндекс Карты</div>
-                <span class="tile-label" data-ru="инструмент" data-en="tool">инструмент</span>
-            </a>
-        </div>
-
-        <!-- 2GIS -->
-        <div class="tile-cell product-tile" data-cat="tools">
-            <a href="https://drive.google.com/file/d/1RBElJ46cOHWjh1yrAAUGWO8-gDTrTxTx/view?usp=sharing" target="_blank" class="tile green">
-                <img src="https://files.winarchive.ru/1747686076_97b70d4bdf2806c85ecee373be82dd42.jpg" alt="2GIS" class="tile-img-icon">
-                <div class="tile-title">2GIS</div>
-                <span class="tile-label" data-ru="инструмент" data-en="tool">инструмент</span>
-            </a>
-        </div>
-
-        <div class="tile-cell wide system-tile">
-            <div class="tile dark">
-                <div class="tile-title" style="color: #00aba9;">WinMarket Catalog</div>
-                <div class="system-info-text" data-ru="Магазин контента адаптирован под строгую разметку плиток без скруглений. Совместимо с мобильными и десктопными экранами." data-en="Content store adapted to strict layouts with sharp edges. Compatible with both mobile and desktop screens.">
-                    Магазин контента адаптирован под строгую разметку плиток без скруглений. Совместимо с мобильными и десктопными экранами.
+        <!-- Слайдер со страницами -->
+        <div class="pivot-content-slider" id="pivot-slider">
+            
+            <!-- СЕКЦИЯ 1: ВИТРИНА -->
+            <section class="pivot-page" id="page-featured">
+                
+                <div class="product-item" data-cat="apps">
+                    <div class="featured-card" onclick="openAppDetails('YouTube')">
+                        <div class="featured-img-box" style="background:#d83b01;">
+                            <img src="https://files.winarchive.ru/1703_tmpusi0234o_Square150x150Logo.scale-200.png" alt="YouTube">
+                        </div>
+                        <div class="featured-info">
+                            <div class="featured-title">YouTube</div>
+                            <div class="featured-price" data-ru="бесплатно" data-en="free">бесплатно</div>
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <div class="featured-desc" data-ru="Смотрите любимые видео, каналы и трансляции по всему миру." data-en="Watch your favorite videos, channels, and streams worldwide.">Смотрите любимые видео, каналы и трансляции по всему миру.</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+
+                <div class="product-item" data-cat="social">
+                    <div class="featured-card" onclick="openAppDetails('Kutegram')">
+                        <div class="featured-img-box" style="background:#d83b01;">
+                            <img src="https://files.winarchive.ru/1754930413_Kutegram.jpg" alt="Kutegram">
+                        </div>
+                        <div class="featured-info">
+                            <div class="featured-title">Kutegram</div>
+                            <div class="featured-price" data-ru="бесплатно" data-en="free">бесплатно</div>
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                            <div class="featured-desc" data-ru="Кастомный Telegram клиент для операционных систем Windows." data-en="Custom Telegram client for Windows OS.">Кастомный Telegram клиент для операционных систем Windows.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-item" data-cat="social">
+                    <div class="featured-card" onclick="openAppDetails('OpenVK')">
+                        <div class="featured-img-box" style="background:#b4009e;">
+                            <img src="https://files.winarchive.ru/1761918768_34790633.png" alt="OpenVK">
+                        </div>
+                        <div class="featured-info">
+                            <div class="featured-title">OpenVK</div>
+                            <div class="featured-price" data-ru="бесплатно" data-en="free">бесплатно</div>
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <div class="featured-desc" data-ru="Клиент социальной сети OpenVK для мобильных платформ." data-en="OpenVK social network client for mobile platforms.">Клиент социальной сети OpenVK для мобильных платформ.</div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- СЕКЦИЯ 2: СКАЧИВАНИЯ -->
+            <section class="pivot-page" id="page-downloads">
+                
+                <div class="section-label-wp" data-ru="недавно скачанные" data-en="recently downloaded">недавно скачанные</div>
+
+                <!-- Контейнер для динамически загружаемых скачанных приложений -->
+                <div id="downloads-history-list"></div>
+
+                <div id="no-downloads-msg" style="color: #888888; font-size: 14px; margin-bottom: 15px;" data-ru="нет загруженных приложений" data-en="no downloaded apps">нет загруженных приложений</div>
+
+                <button type="button" class="wp-button-frame" onclick="clearDownloadsHistory()" data-ru="очистить историю" data-en="clear history">очистить историю</button>
+
+            </section>
+
+            <!-- СЕКЦИЯ 3: КАТЕГОРИИ И ВСЕ ПРИЛОЖЕНИЯ -->
+            <section class="pivot-page" id="page-categories">
+                
+                <div class="category-tiles-grid">
+                    <button type="button" class="cat-tile blue" onclick="filterByCat('apps')">
+                        <i class="fa-solid fa-cubes"></i>
+                        <span data-ru="приложения" data-en="apps">приложения</span>
+                    </button>
+                    <button type="button" class="cat-tile green" onclick="filterByCat('games')">
+                        <i class="fa-solid fa-gamepad"></i>
+                        <span data-ru="игры" data-en="games">игры</span>
+                    </button>
+                    <button type="button" class="cat-tile purple" onclick="filterByCat('social')">
+                        <i class="fa-solid fa-comments"></i>
+                        <span data-ru="соц сети" data-en="social">соц сети</span>
+                    </button>
+                    <button type="button" class="cat-tile orange" onclick="filterByCat('tools')">
+                        <i class="fa-solid fa-wrench"></i>
+                        <span data-ru="инструменты" data-en="tools">инструменты</span>
+                    </button>
+                </div>
+
+                <!-- БЛОК ВСЕ ПРИЛОЖЕНИЯ (ПОЛНЫЙ СПИСОК) -->
+                <div class="section-label-wp" style="margin-top:30px;" data-ru="все приложения" data-en="all apps">все приложения</div>
+
+                <div class="product-item" data-cat="apps">
+                    <div class="download-list-item" onclick="openAppDetails('YouTube')">
+                        <div class="download-tile-icon" style="background:#d83b01;">
+                            <img src="https://files.winarchive.ru/1703_tmpusi0234o_Square150x150Logo.scale-200.png" alt="YouTube">
+                        </div>
+                        <div class="download-details">
+                            <div class="download-name">YouTube</div>
+                            <div class="download-status" data-ru="приложение" data-en="app">приложение</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-item" data-cat="games">
+                    <div class="download-list-item" onclick="openAppDetails('Talking Pierre')">
+                        <div class="download-tile-icon" style="background:#107c41;">
+                            <img src="https://files.winarchive.ru/1754607423_icon.png" alt="Talking Pierre">
+                        </div>
+                        <div class="download-details">
+                            <div class="download-name">Talking Pierre</div>
+                            <div class="download-status" data-ru="игра" data-en="game">игра</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-item" data-cat="games">
+                    <div class="download-list-item" onclick="openAppDetails('Doodle Jump')">
+                        <div class="download-tile-icon" style="background:#107c41;">
+                            <img src="https://files.winarchive.ru/1754602893_icon.png" alt="Doodle Jump">
+                        </div>
+                        <div class="download-details">
+                            <div class="download-name">Doodle Jump</div>
+                            <div class="download-status" data-ru="игра" data-en="game">игра</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-item" data-cat="social">
+                    <div class="download-list-item" onclick="openAppDetails('Kutegram')">
+                        <div class="download-tile-icon" style="background:#d83b01;">
+                            <img src="https://files.winarchive.ru/1754930413_Kutegram.jpg" alt="Kutegram">
+                        </div>
+                        <div class="download-details">
+                            <div class="download-name">Kutegram</div>
+                            <div class="download-status" data-ru="соц сеть" data-en="social network">соц сеть</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-item" data-cat="apps">
+                    <div class="download-list-item" onclick="openAppDetails('Яндекс Музыка')">
+                        <div class="download-tile-icon" style="background:#0078d7;">
+                            <img src="https://files.winarchive.ru/1747683064_Square150x150Logo.devicefamily_xbox_scale_100.png" alt="Яндекс Музыка">
+                        </div>
+                        <div class="download-details">
+                            <div class="download-name" data-ru="Яндекс Музыка" data-en="Yandex Music">Яндекс Музыка</div>
+                            <div class="download-status" data-ru="приложение" data-en="app">приложение</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-item" data-cat="social">
+                    <div class="download-list-item" onclick="openAppDetails('OpenVK')">
+                        <div class="download-tile-icon" style="background:#b4009e;">
+                            <img src="https://files.winarchive.ru/1761918768_34790633.png" alt="OpenVK">
+                        </div>
+                        <div class="download-details">
+                            <div class="download-name">OpenVK</div>
+                            <div class="download-status" data-ru="соц сеть" data-en="social network">соц сеть</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-item" data-cat="social">
+                    <div class="download-list-item" onclick="openAppDetails('Unigram Mobile')">
+                        <div class="download-tile-icon" style="background:#0078d7;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Telegram_2019_Logo.svg/1280px-Telegram_2019_Logo.svg.png" alt="Unigram">
+                        </div>
+                        <div class="download-details">
+                            <div class="download-name">Unigram Mobile</div>
+                            <div class="download-status" data-ru="соц сеть" data-en="social network">соц сеть</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-item" data-cat="apps">
+                    <div class="download-list-item" onclick="openAppDetails('Яндекс Погода')">
+                        <div class="download-tile-icon" style="background:#0078d7;">
+                            <img src="https://files.winarchive.ru/1747683444_Untitled.png" alt="Яндекс Погода">
+                        </div>
+                        <div class="download-details">
+                            <div class="download-name" data-ru="Яндекс Погода" data-en="Yandex Weather">Яндекс Погода</div>
+                            <div class="download-status" data-ru="приложение" data-en="app">приложение</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-item" data-cat="tools">
+                    <div class="download-list-item" onclick="openAppDetails('Яндекс Карты')">
+                        <div class="download-tile-icon" style="background:#d83b01;">
+                            <img src="https://files.winarchive.ru/1748260281_image_2025_03_31_23_13_17.png" alt="Яндекс Карты">
+                        </div>
+                        <div class="download-details">
+                            <div class="download-name" data-ru="Яндекс Карты" data-en="Yandex Maps">Яндекс Карты</div>
+                            <div class="download-status" data-ru="инструмент" data-en="tool">инструмент</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-item" data-cat="tools">
+                    <div class="download-list-item" onclick="openAppDetails('2GIS')">
+                        <div class="download-tile-icon" style="background:#107c41;">
+                            <img src="https://files.winarchive.ru/1747686076_97b70d4bdf2806c85ecee373be82dd42.jpg" alt="2GIS">
+                        </div>
+                        <div class="download-details">
+                            <div class="download-name">2GIS</div>
+                            <div class="download-status" data-ru="инструмент" data-en="tool">инструмент</div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
         </div>
 
     </main>
 
-    <!-- Кастомное Metro-окно -->
+    <!-- WP App Bar внизу экрана -->
+    <div class="wp-appbar">
+        <button type="button" class="appbar-circle-btn" onclick="toggleSearch()" title="Поиск"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <button type="button" class="appbar-circle-btn" onclick="toggleMenu()" title="Меню"><i class="fa-solid fa-ellipsis"></i></button>
+    </div>
+
+    <!-- Модальное окно О версии -->
     <div class="metro-modal" id="aboutModal">
         <div class="metro-modal-box">
-            <div class="metro-modal-title" id="modal-title">winmarket</div>
+            <div class="metro-modal-title">winmarket store</div>
             <div class="metro-modal-body" id="modal-body"></div>
             <button type="button" class="metro-modal-btn" onclick="closeVersionInfo()">ОК</button>
             <div style="clear:both;"></div>
@@ -712,91 +914,291 @@
     <script>
         var currentLang = 'ru';
         var currentCategory = 'all';
+        var activePivotIndex = 0;
+        var currentSelectedApp = null;
 
-        function applyStaggeredAnimation() {
-            var visibleCells = document.querySelectorAll('.tile-cell');
-            var delay = 0;
-            for (var i = 0; i < visibleCells.length; i++) {
-                if (visibleCells[i].style.display !== 'none') {
-                    visibleCells[i].style.animation = 'none';
-                    visibleCells[i].offsetHeight;
-                    visibleCells[i].style.animation = 'wpMetroEntrance 0.35s cubic-bezier(0.1, 0.8, 0.2, 1) forwards';
-                    visibleCells[i].style.animationDelay = (delay * 0.04) + 's';
-                    delay++;
+        // База данных приложений
+        var appsDatabase = {
+            'YouTube': {
+                name: 'YouTube',
+                developer: 'Google LLC',
+                icon: 'https://files.winarchive.ru/1703_tmpusi0234o_Square150x150Logo.scale-200.png',
+                bg: '#d83b01',
+                link: 'https://drive.google.com/file/d/1fnA2ao1FCqp-4asErjEnhSLj08PtBto0/view?usp=sharing',
+                screenshots: [
+                    'https://files.winarchive.ru/1703_tmpusi0234o_Square150x150Logo.scale-200.png',
+                    'https://files.winarchive.ru/1703_tmpusi0234o_Square150x150Logo.scale-200.png',
+                    'https://files.winarchive.ru/1703_tmpusi0234o_Square150x150Logo.scale-200.png'
+                ],
+                desc_ru: 'Смотрите любимые видео, каналы и трансляции по всему миру в высоком качестве.',
+                desc_en: 'Watch your favorite videos, channels, and streams worldwide in high quality.'
+            },
+            'Talking Pierre': {
+                name: 'Talking Pierre',
+                developer: 'Outfit7 Limited',
+                icon: 'https://files.winarchive.ru/1754607423_icon.png',
+                bg: '#107c41',
+                link: 'https://drive.google.com/file/d/1nFbrOl6dXk_0Tkyw9jkt83F8UxD9WE8Z/view?usp=drive_link',
+                screenshots: [
+                    'https://files.winarchive.ru/1754607423_icon.png',
+                    'https://files.winarchive.ru/1754607423_icon.png',
+                    'https://files.winarchive.ru/1754607423_icon.png'
+                ],
+                desc_ru: 'Веселый говорящий попугай Пьер готов повторять за вами фразы и устраивать беспорядок!',
+                desc_en: 'Fun talking parrot Pierre is ready to repeat your phrases and make a mess!'
+            },
+            'Doodle Jump': {
+                name: 'Doodle Jump',
+                developer: 'Lima Sky',
+                icon: 'https://files.winarchive.ru/1754602893_icon.png',
+                bg: '#107c41',
+                link: 'https://drive.google.com/file/d/1CvGYLBAFvXPZ0Id6PUEzMxDr9VaqqG3j/view?usp=sharing',
+                screenshots: [
+                    'https://files.winarchive.ru/1754602893_icon.png',
+                    'https://files.winarchive.ru/1754602893_icon.png',
+                    'https://files.winarchive.ru/1754602893_icon.png'
+                ],
+                desc_ru: 'Классическая аркада! Прыгайте все выше и выше по платформам, избегая монстров.',
+                desc_en: 'Classic arcade game! Jump higher and higher on platforms while avoiding monsters.'
+            },
+            'Kutegram': {
+                name: 'Kutegram',
+                developer: 'KuteDev Team',
+                icon: 'https://files.winarchive.ru/1754930413_Kutegram.jpg',
+                bg: '#d83b01',
+                link: 'https://drive.google.com/file/d/1ymJZi1Sgq_UaEJAJEZTyFLXeznEyzt4k/view?usp=sharing',
+                screenshots: [
+                    'https://files.winarchive.ru/1754930413_Kutegram.jpg',
+                    'https://files.winarchive.ru/1754930413_Kutegram.jpg',
+                    'https://files.winarchive.ru/1754930413_Kutegram.jpg'
+                ],
+                desc_ru: 'Кастомный и быстрый Telegram клиент, оптимизированный под Windows.',
+                desc_en: 'Custom and fast Telegram client optimized for Windows OS.'
+            },
+            'Яндекс Музыка': {
+                name: 'Яндекс Музыка',
+                developer: 'Yandex LLC',
+                icon: 'https://files.winarchive.ru/1747683064_Square150x150Logo.devicefamily_xbox_scale_100.png',
+                bg: '#0078d7',
+                link: 'https://drive.google.com/file/d/1xzuShCrlhToRIQv-vr_AEkY48eYuHZBh/view?usp=sharing',
+                screenshots: [
+                    'https://files.winarchive.ru/1747683064_Square150x150Logo.devicefamily_xbox_scale_100.png',
+                    'https://files.winarchive.ru/1747683064_Square150x150Logo.devicefamily_xbox_scale_100.png',
+                    'https://files.winarchive.ru/1747683064_Square150x150Logo.devicefamily_xbox_scale_100.png'
+                ],
+                desc_ru: 'Миллионы треков, подкасты и персональные рекомендации «Моя волна».',
+                desc_en: 'Millions of tracks, podcasts, and personalized music recommendations.'
+            },
+            'OpenVK': {
+                name: 'OpenVK',
+                developer: 'OpenVK Community',
+                icon: 'https://files.winarchive.ru/1761918768_34790633.png',
+                bg: '#b4009e',
+                link: 'https://drive.google.com/file/d/1gKFicbMqNuy1SfB9vEn-1c3b8KE-hS81/view?usp=sharing',
+                screenshots: [
+                    'https://files.winarchive.ru/1761918768_34790633.png',
+                    'https://files.winarchive.ru/1761918768_34790633.png',
+                    'https://files.winarchive.ru/1761918768_34790633.png'
+                ],
+                desc_ru: 'Удобный клиент социальной сети OpenVK для общения и чтения новостей.',
+                desc_en: 'Convenient OpenVK social network client for messaging and news.'
+            },
+            'Unigram Mobile': {
+                name: 'Unigram Mobile',
+                developer: 'Unigram Team',
+                icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Telegram_2019_Logo.svg/1280px-Telegram_2019_Logo.svg.png',
+                bg: '#0078d7',
+                link: 'https://drive.google.com/file/d/1sCDUaaDEOD4Oxir4ojY1s1cZwE5DQCNA/view?usp=sharing',
+                screenshots: [
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Telegram_2019_Logo.svg/1280px-Telegram_2019_Logo.svg.png',
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Telegram_2019_Logo.svg/1280px-Telegram_2019_Logo.svg.png',
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Telegram_2019_Logo.svg/1280px-Telegram_2019_Logo.svg.png'
+                ],
+                desc_ru: 'Оптимизированный мобильный Telegram клиент в стиле Universal Windows Platform.',
+                desc_en: 'Optimized mobile Telegram client built with Universal Windows Platform style.'
+            },
+            'Яндекс Погода': {
+                name: 'Яндекс Погода',
+                developer: 'Yandex LLC',
+                icon: 'https://files.winarchive.ru/1747683444_Untitled.png',
+                bg: '#0078d7',
+                link: 'https://drive.google.com/file/d/1cHw43llIjfa9jLkAbdQULaRTFyKNCXBY/view?usp=sharing',
+                screenshots: [
+                    'https://files.winarchive.ru/1747683444_Untitled.png',
+                    'https://files.winarchive.ru/1747683444_Untitled.png',
+                    'https://files.winarchive.ru/1747683444_Untitled.png'
+                ],
+                desc_ru: 'Точный прогноз погоды с детальной картой осадков на каждый час.',
+                desc_en: 'Accurate weather forecast with detailed hourly precipitation map.'
+            },
+            'Яндекс Карты': {
+                name: 'Яндекс Карты',
+                developer: 'Yandex LLC',
+                icon: 'https://files.winarchive.ru/1748260281_image_2025_03_31_23_13_17.png',
+                bg: '#d83b01',
+                link: 'https://drive.google.com/file/d/1TLEuH-6B22EFtPzjh0wQR8r4jrTxTOPM/view?usp=sharing',
+                screenshots: [
+                    'https://files.winarchive.ru/1748260281_image_2025_03_31_23_13_17.png',
+                    'https://files.winarchive.ru/1748260281_image_2025_03_31_23_13_17.png',
+                    'https://files.winarchive.ru/1748260281_image_2025_03_31_23_13_17.png'
+                ],
+                desc_ru: 'Навигатор, карты городов, общественный транспорт и поиск мест.',
+                desc_en: 'GPS Navigator, city maps, public transport, and place search.'
+            },
+            '2GIS': {
+                name: '2GIS',
+                developer: '2GIS LLC',
+                icon: 'https://files.winarchive.ru/1747686076_97b70d4bdf2806c85ecee373be82dd42.jpg',
+                bg: '#107c41',
+                link: 'https://drive.google.com/file/d/1RBElJ46cOHWjh1yrAAUGWO8-gDTrTxTx/view?usp=sharing',
+                screenshots: [
+                    'https://files.winarchive.ru/1747686076_97b70d4bdf2806c85ecee373be82dd42.jpg',
+                    'https://files.winarchive.ru/1747686076_97b70d4bdf2806c85ecee373be82dd42.jpg',
+                    'https://files.winarchive.ru/1747686076_97b70d4bdf2806c85ecee373be82dd42.jpg'
+                ],
+                desc_ru: 'Подробная карта города с офлайн навигатором и справочником организаций.',
+                desc_en: 'Detailed city map with offline navigator and directory of companies.'
+            }
+        };
+
+        // Открытие карточки приложения (анимация выезда слева)
+        function openAppDetails(appName) {
+            var data = appsDatabase[appName];
+            if (!data) return;
+
+            currentSelectedApp = data;
+
+            document.getElementById('det-title').innerText = data.name;
+            document.getElementById('det-developer').innerText = data.developer;
+            document.getElementById('det-icon').src = data.icon;
+            document.getElementById('det-icon-box').style.backgroundColor = data.bg;
+            document.getElementById('det-download-btn').href = data.link;
+
+            document.getElementById('det-shot-1').src = data.screenshots[0];
+            document.getElementById('det-shot-2').src = data.screenshots[1];
+            document.getElementById('det-shot-3').src = data.screenshots[2];
+
+            document.getElementById('det-desc').innerText = currentLang === 'ru' ? data.desc_ru : data.desc_en;
+
+            document.getElementById('app-details-screen').classList.add('open');
+        }
+
+        function closeAppDetails() {
+            document.getElementById('app-details-screen').classList.remove('open');
+        }
+
+        // Клик по кнопке Скачать внутри карточки
+        function onDownloadClick() {
+            if (currentSelectedApp) {
+                trackDownload(currentSelectedApp.name, currentSelectedApp.icon, currentSelectedApp.bg);
+            }
+        }
+
+        // Сохранение скачанного приложения
+        function trackDownload(name, iconUrl, bgColor) {
+            var history = JSON.parse(localStorage.getItem('wm_download_history') || '[]');
+            
+            var exists = false;
+            for (var i = 0; i < history.length; i++) {
+                if (history[i].name === name) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists) {
+                history.unshift({
+                    name: name,
+                    icon: iconUrl,
+                    bg: bgColor
+                });
+                localStorage.setItem('wm_download_history', JSON.stringify(history));
+                loadDownloadsHistory();
+            }
+        }
+
+        // Отрисовка списка на вкладке «Скачивания»
+        function loadDownloadsHistory() {
+            var listContainer = document.getElementById('downloads-history-list');
+            var noMsg = document.getElementById('no-downloads-msg');
+            var history = JSON.parse(localStorage.getItem('wm_download_history') || '[]');
+
+            listContainer.innerHTML = '';
+
+            if (history.length === 0) {
+                noMsg.style.display = 'block';
+                return;
+            }
+
+            noMsg.style.display = 'none';
+
+            var statusText = currentLang === 'ru' ? 'установлено' : 'installed';
+
+            for (var i = 0; i < history.length; i++) {
+                var item = history[i];
+                var html = '<div class="download-list-item" onclick="openAppDetails(\'' + item.name + '\')">' +
+                    '<div class="download-tile-icon" style="background:' + item.bg + ';">' +
+                        '<img src="' + item.icon + '" alt="' + item.name + '">' +
+                    '</div>' +
+                    '<div class="download-details">' +
+                        '<div class="download-name">' + item.name + '</div>' +
+                        '<div class="download-status">' + statusText + '</div>' +
+                    '</div>' +
+                '</div>';
+                listContainer.innerHTML += html;
+            }
+        }
+
+        function clearDownloadsHistory() {
+            localStorage.removeItem('wm_download_history');
+            loadDownloadsHistory();
+        }
+
+        function switchPivot(index) {
+            activePivotIndex = index;
+            var slider = document.getElementById('pivot-slider');
+            slider.style.transform = 'translateX(-' + (index * 100) + 'vw)';
+            
+            for (var i = 0; i < 3; i++) {
+                var hdr = document.getElementById('p-hdr-' + i);
+                if (i === index) {
+                    hdr.classList.add('active');
+                } else {
+                    hdr.classList.remove('active');
                 }
             }
         }
 
-        window.addEventListener('DOMContentLoaded', function() {
-            applyStaggeredAnimation();
-        });
-
-        function levenshteinDistance(a, b) {
-            if (a.length === 0) return b.length;
-            if (b.length === 0) return a.length;
-
-            var matrix = [];
-            for (var i = 0; i <= b.length; i++) { matrix[i] = [i]; }
-            for (var j = 0; j <= a.length; j++) { matrix[0][j] = j; }
-
-            for (var i = 1; i <= b.length; i++) {
-                for (var j = 1; j <= a.length; j++) {
-                    if (b.charAt(i - 1) === a.charAt(j - 1)) {
-                        matrix[i][j] = matrix[i - 1][j - 1];
-                    } else {
-                        matrix[i][j] = Math.min(
-                            matrix[i - 1][j - 1] + 1,
-                            Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
-                        );
-                    }
-                }
+        function toggleSearch() {
+            var s = document.getElementById('search-box');
+            s.classList.toggle('visible');
+            if (s.classList.contains('visible')) {
+                document.getElementById('search-input').focus();
             }
-            return matrix[b.length][a.length];
         }
 
-        function isFuzzyMatch(text, query) {
-            text = text.toLowerCase();
-            query = query.toLowerCase().trim();
-
-            if (!query) return true;
-            if (text.indexOf(query) !== -1) return true;
-
-            var words = text.split(/\s+/);
-            for (var i = 0; i < words.length; i++) {
-                var word = words[i];
-                var dist = levenshteinDistance(word, query);
-                
-                if (query.length <= 3 && dist <= 1) return true;
-                if (query.length > 3 && query.length <= 6 && dist <= 2) return true;
-                if (query.length > 6 && dist <= 3) return true;
-            }
-            return false;
+        function filterByCat(cat) {
+            currentCategory = cat;
+            switchPivot(2);
+            searchApps();
         }
 
         function searchApps() {
-            var query = document.getElementById('search-input').value;
-            var products = document.querySelectorAll('.product-tile');
-            var pivotCells = document.querySelectorAll('.pivot-cell');
+            var query = document.getElementById('search-input').value.toLowerCase().trim();
+            var items = document.querySelectorAll('.product-item');
 
-            for (var k = 0; k < pivotCells.length; k++) {
-                pivotCells[k].style.display = query.trim() === '' ? 'block' : 'none';
-            }
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                var cat = item.getAttribute('data-cat');
+                var text = item.innerText.toLowerCase();
 
-            for (var j = 0; j < products.length; j++) {
-                var p = products[j];
-                var cat = p.getAttribute('data-cat');
-                var title = p.querySelector('.tile-title') ? p.querySelector('.tile-title').innerText : '';
-                var desc = p.querySelector('.tile-desc') ? p.querySelector('.tile-desc').innerText : '';
-                var label = p.querySelector('.tile-label') ? p.querySelector('.tile-label').innerText : '';
+                var matchesCat = (currentCategory === 'all' || cat === currentCategory);
+                var matchesSearch = (query === '' || text.indexOf(query) !== -1);
 
-                var fullContent = title + ' ' + desc + ' ' + label;
-                var matchesCategory = (currentCategory === 'all' || cat === currentCategory);
-                var matchesSearch = isFuzzyMatch(fullContent, query);
-
-                if (matchesCategory && matchesSearch) {
-                    p.style.display = 'block';
+                if (matchesCat && matchesSearch) {
+                    item.style.display = 'block';
                 } else {
-                    p.style.display = 'none';
+                    item.style.display = 'none';
                 }
             }
         }
@@ -804,101 +1206,70 @@
         function toggleMenu() {
             var drawer = document.getElementById('drawer');
             var shield = document.getElementById('shield');
-            
-            if (drawer.classList.contains('open')) {
-                drawer.classList.remove('open');
-                shield.classList.remove('open');
-            } else {
-                drawer.classList.add('open');
-                shield.classList.add('open');
-            }
+            drawer.classList.toggle('open');
+            shield.classList.toggle('open');
         }
 
         function goHome() {
+            closeAppDetails();
+            currentCategory = 'all';
             document.getElementById('search-input').value = '';
-            var items = document.querySelectorAll('.drawer-item');
-            for (var i = 0; i < items.length; i++) {
-                items[i].className = 'drawer-item';
-            }
-            document.getElementById('menu-all').className = 'drawer-item active';
-            
-            filterGrid('all', document.getElementById('pivot-all'));
-            
-            var drawer = document.getElementById('drawer');
-            if (drawer.classList.contains('open')) {
-                toggleMenu();
-            }
-        }
-
-        function filterGrid(category, element) {
-            currentCategory = category;
-            var filters = document.querySelectorAll('.filter-tile');
-            for (var i = 0; i < filters.length; i++) {
-                filters[i].className = 'tile filter-tile dark';
-            }
-            
-            if (element) {
-                element.className = 'tile filter-tile active dark';
-            } else {
-                var targetPivot = document.getElementById('pivot-' + category);
-                if (targetPivot) targetPivot.className = 'tile filter-tile active dark';
-            }
-
+            switchPivot(0);
             searchApps();
-            applyStaggeredAnimation();
+            if (document.getElementById('drawer').classList.contains('open')) toggleMenu();
         }
 
-        function selectCategory(category, element) {
+        function selectCategory(cat, element) {
+            closeAppDetails();
             var items = document.querySelectorAll('.drawer-item');
-            for (var i = 0; i < items.length; i++) {
-                items[i].className = 'drawer-item';
-            }
-            element.className = 'drawer-item active';
+            for (var i = 0; i < items.length; i++) items[i].classList.remove('active');
+            element.classList.add('active');
             
-            filterGrid(category, null);
+            currentCategory = cat;
+            switchPivot(2);
+            searchApps();
             toggleMenu();
         }
 
         function changeLanguage(lang) {
             currentLang = lang;
-            
-            document.getElementById('lang-ru').className = 'lang-btn';
-            document.getElementById('lang-en').className = 'lang-btn';
-            document.getElementById('lang-' + lang).className = 'lang-btn active';
+            document.getElementById('lang-ru').className = 'lang-btn' + (lang === 'ru' ? ' active' : '');
+            document.getElementById('lang-en').className = 'lang-btn' + (lang === 'en' ? ' active' : '');
 
-            var translatableElements = document.querySelectorAll('[data-ru]');
-            for (var i = 0; i < translatableElements.length; i++) {
-                var el = translatableElements[i];
-                var translation = el.getAttribute('data-' + lang);
-                if (translation) {
-                    el.innerText = translation;
-                }
+            var translatable = document.querySelectorAll('[data-ru]');
+            for (var i = 0; i < translatable.length; i++) {
+                var el = translatable[i];
+                var t = el.getAttribute('data-' + lang);
+                if (t) el.innerText = t;
             }
 
             var input = document.getElementById('search-input');
             input.placeholder = input.getAttribute('data-placeholder-' + lang);
-            
-            document.querySelector('#pivot-all .tile-title').innerText = lang === 'ru' ? 'Все софты' : 'All Software';
-            document.querySelector('#pivot-apps .tile-title').innerText = lang === 'ru' ? 'Приложения' : 'Apps';
-            document.querySelector('#pivot-games .tile-title').innerText = lang === 'ru' ? 'Игры' : 'Games';
-            document.querySelector('#pivot-social .tile-title').innerText = lang === 'ru' ? 'Соц сети' : 'Social';
+
+            if (currentSelectedApp) {
+                document.getElementById('det-desc').innerText = currentLang === 'ru' ? currentSelectedApp.desc_ru : currentSelectedApp.desc_en;
+            }
+
+            loadDownloadsHistory();
         }
 
         function showVersionInfo() {
-            var modal = document.getElementById('aboutModal');
             var body = document.getElementById('modal-body');
-            
             if (currentLang === 'ru') {
                 body.innerText = "Версия: alpha 0.5.0\nРазработчик: Gleb";
             } else {
                 body.innerText = "Version: Alpha 0.5.0\nDeveloper: Gleb";
             }
-            modal.classList.add('open');
+            document.getElementById('aboutModal').classList.add('open');
         }
 
         function closeVersionInfo() {
             document.getElementById('aboutModal').classList.remove('open');
         }
+
+        window.onload = function() {
+            loadDownloadsHistory();
+        };
     </script>
 </body>
 </html>
