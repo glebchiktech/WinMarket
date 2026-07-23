@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>WinMarket — Windows Store UI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +14,7 @@
             border-radius: 0 !important;
             touch-action: manipulation;
             user-select: none;
+            -webkit-user-select: none;
         }
 
         body {
@@ -26,7 +27,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Общие правила анимаций отклика на нажатие (Metro Active Effect) */
+        /* Эффекты нажатия */
         .featured-card,
         .download-list-item,
         .cat-tile,
@@ -60,7 +61,7 @@
             opacity: 0.6;
         }
 
-        /* Навигационная панель Windows */
+        /* Верхняя панель */
         header.metro-navbar {
             background-color: #000000;
             height: 50px;
@@ -72,7 +73,6 @@
             display: flex;
             align-items: center;
             padding: 0 15px;
-            background: #000;
         }
 
         .menu-btn {
@@ -97,12 +97,13 @@
             cursor: pointer;
         }
 
-        /* WP8 Pivot Panorama Layout */
+        /* Контейнер Панорамы */
         .wp-pivot-container {
             padding-top: 50px;
             padding-bottom: 70px;
             width: 100vw;
             overflow-x: hidden;
+            touch-action: pan-y;
         }
 
         .wp-main-title {
@@ -110,39 +111,51 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             color: #ffffff;
-            padding: 10px 20px 0 20px;
+            padding: 10px 20px 5px 20px;
             font-weight: 400;
         }
 
-        /* Pivot Headers (Горизонтальная прокрутка) */
+        /* ЗАГОЛОВКИ ПАНОРАМЫ (Исправлено отображение) */
         .pivot-headers-wrapper {
             width: 100%;
-            overflow-x: auto;
+            overflow: hidden;
             white-space: nowrap;
-            scrollbar-width: none;
             padding: 0 20px 15px 20px;
+            min-height: 60px;
         }
-        .pivot-headers-wrapper::-webkit-scrollbar { display: none; }
+
+        .pivot-headers-inner {
+            display: flex;
+            align-items: baseline;
+            gap: 35px;
+            will-change: transform;
+            transition: transform 0.35s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .pivot-headers-inner.dragging {
+            transition: none !important;
+        }
 
         .pivot-header-btn {
             background: none;
             border: none;
-            color: #666666;
-            font-size: 45px;
+            color: #555555;
+            font-size: 42px;
             font-weight: 300;
             text-transform: lowercase;
-            margin-right: 25px;
             cursor: pointer;
             padding: 0;
-            transition: color 0.2s ease, transform 0.1s ease;
             font-family: "Segoe UI Light", "Open Sans", sans-serif;
+            flex-shrink: 0;
+            white-space: nowrap;
+            line-height: 1;
         }
 
         .pivot-header-btn.active {
             color: #ffffff;
         }
 
-        /* Поисковая строка */
+        /* Поиск */
         .search-box-container {
             position: relative;
             margin: 0 20px 20px 20px;
@@ -173,20 +186,26 @@
             pointer-events: none;
         }
 
-        /* Pivot Sections Container */
+        /* Слайдер Контента */
         .pivot-content-slider {
             display: flex;
-            width: 300vw;
-            transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+            width: 100vw;
+            will-change: transform;
+            transition: transform 0.35s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .pivot-content-slider.dragging {
+            transition: none !important;
         }
 
         .pivot-page {
             width: 100vw;
             padding: 0 20px;
             box-sizing: border-box;
+            flex-shrink: 0;
         }
 
-        /* Карточки Витрины */
+        /* Элементы списка и карточки */
         .featured-card {
             display: flex;
             background: #000000;
@@ -214,29 +233,10 @@
             object-fit: cover;
         }
 
-        .featured-info {
-            flex-grow: 1;
-        }
-
-        .featured-title {
-            font-size: 24px;
-            font-weight: 300;
-            margin-bottom: 2px;
-            line-height: 1.1;
-        }
-
-        .featured-price {
-            font-size: 13px;
-            color: #aaaaaa;
-            margin-bottom: 6px;
-        }
-
-        .rating-stars {
-            color: #ffffff;
-            font-size: 12px;
-            margin-bottom: 8px;
-        }
-
+        .featured-info { flex-grow: 1; }
+        .featured-title { font-size: 24px; font-weight: 300; margin-bottom: 2px; line-height: 1.1; }
+        .featured-price { font-size: 13px; color: #aaaaaa; margin-bottom: 6px; }
+        .rating-stars { color: #ffffff; font-size: 12px; margin-bottom: 8px; }
         .rating-stars .far { color: #555555; }
 
         .featured-desc {
@@ -258,7 +258,6 @@
             font-weight: 600;
         }
 
-        /* Список скачиваний / приложений */
         .download-list-item {
             display: flex;
             align-items: center;
@@ -279,28 +278,10 @@
             justify-content: center;
         }
 
-        .download-tile-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .download-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .download-name {
-            font-size: 22px;
-            font-weight: 300;
-            line-height: 1.2;
-        }
-
-        .download-status {
-            font-size: 13px;
-            color: #888888;
-            text-transform: lowercase;
-        }
+        .download-tile-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .download-details { display: flex; flex-direction: column; }
+        .download-name { font-size: 22px; font-weight: 300; line-height: 1.2; }
+        .download-status { font-size: 13px; color: #888888; text-transform: lowercase; }
 
         .wp-button-frame {
             background: transparent;
@@ -317,13 +298,7 @@
             display: inline-block;
             text-decoration: none;
         }
-        .wp-button-frame:active {
-            background: #ffffff !important;
-            color: #000000 !important;
-            transform: scale(0.95);
-        }
 
-        /* Категории Tile Grid */
         .category-tiles-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -353,7 +328,7 @@
         .cat-tile i { font-size: 24px; }
         .cat-tile span { font-size: 16px; font-weight: 300; text-transform: lowercase; }
 
-        /* Выдвижное боковое меню */
+        /* Выдвижная панель */
         .drawer-overlay {
             position: fixed;
             top: 50px;
@@ -407,7 +382,6 @@
             text-align: center;
         }
         .lang-btn.active { background-color: #00aba9; }
-        .lang-btn:active { transform: scale(0.95); opacity: 0.8; }
 
         .version-btn {
             width: 100%;
@@ -419,13 +393,8 @@
             margin-top: 15px;
             cursor: pointer;
         }
-        .version-btn:active {
-            background-color: #ffffff;
-            color: #000000;
-            transform: scale(0.95);
-        }
 
-        /* Нижний App Bar */
+        /* App Bar */
         .wp-appbar {
             position: fixed;
             bottom: 0;
@@ -470,7 +439,7 @@
         }
         .click-shield.open { opacity: 1; pointer-events: auto; }
 
-        /* ЭКРАН ДЕТАЛЕЙ ПРИЛОЖЕНИЯ (Выезжает слева с анимацией) */
+        /* Оверлей приложения */
         .app-details-overlay {
             position: fixed;
             top: 50px;
@@ -484,121 +453,42 @@
             transition: transform 0.35s cubic-bezier(0.1, 0.9, 0.2, 1);
         }
 
-        .app-details-overlay.open {
-            transform: translateX(100vw);
-        }
+        .app-details-overlay.open { transform: translateX(100vw); }
 
-        .details-header {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 20px;
-        }
-
-        .details-icon {
-            width: 90px;
-            height: 90px;
-            background-color: #0078d7;
-            margin-right: 15px;
-            flex-shrink: 0;
-        }
-
-        .details-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .details-meta {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .details-title {
-            font-size: 28px;
-            font-weight: 300;
-            line-height: 1.1;
-            margin-bottom: 4px;
-        }
-
-        .details-developer {
-            font-size: 14px;
-            color: #00aba9;
-            margin-bottom: 12px;
-        }
+        .details-header { display: flex; align-items: flex-start; margin-bottom: 20px; }
+        .details-icon { width: 90px; height: 90px; background-color: #0078d7; margin-right: 15px; flex-shrink: 0; }
+        .details-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .details-meta { display: flex; flex-direction: column; justify-content: center; }
+        .details-title { font-size: 28px; font-weight: 300; line-height: 1.1; margin-bottom: 4px; }
+        .details-developer { font-size: 14px; color: #00aba9; margin-bottom: 12px; }
 
         .details-screenshots-scroll {
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            margin: 20px 0;
-            padding-bottom: 10px;
-            scrollbar-width: none;
+            display: flex; gap: 12px; overflow-x: auto; margin: 20px 0; padding-bottom: 10px; scrollbar-width: none;
         }
         .details-screenshots-scroll::-webkit-scrollbar { display: none; }
-
-        .details-screenshot-item {
-            width: 160px;
-            height: 260px;
-            background-color: #1f1f1f;
-            flex-shrink: 0;
-            border: 1px solid #333333;
-        }
-
-        .details-screenshot-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .details-description-text {
-            font-size: 14px;
-            color: #cccccc;
-            line-height: 1.5;
-            margin-top: 15px;
-            white-space: pre-line;
-        }
+        .details-screenshot-item { width: 160px; height: 260px; background-color: #1f1f1f; flex-shrink: 0; border: 1px solid #333333; }
+        .details-screenshot-item img { width: 100%; height: 100%; object-fit: cover; }
+        .details-description-text { font-size: 14px; color: #cccccc; line-height: 1.5; margin-top: 15px; white-space: pre-line; }
 
         .back-btn-wp {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 0;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            background: none; border: none; color: #ffffff; font-size: 16px; cursor: pointer; padding: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;
         }
 
-        /* Модалка о версии */
+        /* Модалка */
         .metro-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 2000;
-            display: flex; align-items: center; justify-content: center;
-            padding: 20px;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.2s ease;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
         }
         .metro-modal.open { opacity: 1; pointer-events: auto; }
-
-        .metro-modal-box {
-            background: #1f1f1f;
-            border: 2px solid #00aba9;
-            width: 100%; max-width: 400px; padding: 20px;
-        }
+        .metro-modal-box { background: #1f1f1f; border: 2px solid #00aba9; width: 100%; max-width: 400px; padding: 20px; }
         .metro-modal-title { font-size: 20px; font-weight: 300; color: #00aba9; margin-bottom: 15px; }
         .metro-modal-body { font-size: 15px; line-height: 1.4; margin-bottom: 20px; white-space: pre-line; }
         .metro-modal-btn { background: #222222; border: 2px solid #555555; color: #ffffff; padding: 8px 25px; cursor: pointer; float: right; }
-        .metro-modal-btn:active { background: #00aba9; color: #ffffff; transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-    <!-- Верхняя узкая панель -->
+    <!-- Навбар -->
     <header class="metro-navbar">
         <button type="button" class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
         <button type="button" class="navbar-brand" onclick="goHome()">WinMarket</button>
@@ -626,7 +516,7 @@
         </div>
     </div>
 
-    <!-- ВЫЕЗЖАЮЩИЙ СЛЕВА ЭКРАН ПОДРОБНОСТЕЙ О ПРИЛОЖЕНИИ -->
+    <!-- Экран карточки -->
     <div class="app-details-overlay" id="app-details-screen">
         <button type="button" class="back-btn-wp" onclick="closeAppDetails()">
             <i class="fa-solid fa-arrow-left"></i> <span data-ru="назад" data-en="back">назад</span>
@@ -645,7 +535,6 @@
 
         <div class="section-label-wp" data-ru="обзор" data-en="overview">обзор</div>
 
-        <!-- 3 скриншота -->
         <div class="details-screenshots-scroll">
             <div class="details-screenshot-item"><img id="det-shot-1" src="" alt="скриншот 1"></div>
             <div class="details-screenshot-item"><img id="det-shot-2" src="" alt="скриншот 2"></div>
@@ -656,30 +545,27 @@
         <div class="details-description-text" id="det-desc"></div>
     </div>
 
-    <!-- Контейнер WP8 Pivot -->
-    <main class="wp-pivot-container">
+    <!-- Контейнер Pivot -->
+    <main class="wp-pivot-container" id="pivot-main-container">
         
         <div class="wp-main-title" id="main-store-label" data-ru="магазин" data-en="store">магазин</div>
 
-        <!-- Горизонтальные заголовки секций -->
+        <!-- Заголовки -->
         <div class="pivot-headers-wrapper">
-            <button type="button" class="pivot-header-btn active" onclick="switchPivot(0)" id="p-hdr-0" data-ru="витрина" data-en="featured">витрина</button>
-            <button type="button" class="pivot-header-btn" onclick="switchPivot(1)" id="p-hdr-1" data-ru="скачивания" data-en="downloads">скачивания</button>
-            <button type="button" class="pivot-header-btn" onclick="switchPivot(2)" id="p-hdr-2" data-ru="категории" data-en="categories">категории</button>
+            <div class="pivot-headers-inner" id="headers-slider"></div>
         </div>
 
-        <!-- Строка Поиска -->
+        <!-- Поиск -->
         <div class="search-box-container" id="search-box">
             <input type="text" class="search-input" id="search-input" placeholder="поиск в магазине..." oninput="searchApps()" data-placeholder-ru="поиск в магазине..." data-placeholder-en="search store...">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
         </div>
 
-        <!-- Слайдер со страницами -->
+        <!-- Слайдер контента -->
         <div class="pivot-content-slider" id="pivot-slider">
             
             <!-- СЕКЦИЯ 1: ВИТРИНА -->
             <section class="pivot-page" id="page-featured">
-                
                 <div class="product-item" data-cat="apps">
                     <div class="featured-card" onclick="openAppDetails('YouTube')">
                         <div class="featured-img-box" style="background:#d83b01;">
@@ -727,26 +613,18 @@
                         </div>
                     </div>
                 </div>
-
             </section>
 
             <!-- СЕКЦИЯ 2: СКАЧИВАНИЯ -->
             <section class="pivot-page" id="page-downloads">
-                
                 <div class="section-label-wp" data-ru="недавно скачанные" data-en="recently downloaded">недавно скачанные</div>
-
-                <!-- Контейнер для динамически загружаемых скачанных приложений -->
                 <div id="downloads-history-list"></div>
-
                 <div id="no-downloads-msg" style="color: #888888; font-size: 14px; margin-bottom: 15px;" data-ru="нет загруженных приложений" data-en="no downloaded apps">нет загруженных приложений</div>
-
                 <button type="button" class="wp-button-frame" onclick="clearDownloadsHistory()" data-ru="очистить историю" data-en="clear history">очистить историю</button>
-
             </section>
 
-            <!-- СЕКЦИЯ 3: КАТЕГОРИИ И ВСЕ ПРИЛОЖЕНИЯ -->
+            <!-- СЕКЦИЯ 3: КАТЕГОРИИ -->
             <section class="pivot-page" id="page-categories">
-                
                 <div class="category-tiles-grid">
                     <button type="button" class="cat-tile blue" onclick="filterByCat('apps')">
                         <i class="fa-solid fa-cubes"></i>
@@ -766,7 +644,6 @@
                     </button>
                 </div>
 
-                <!-- БЛОК ВСЕ ПРИЛОЖЕНИЯ (ПОЛНЫЙ СПИСОК) -->
                 <div class="section-label-wp" style="margin-top:30px;" data-ru="все приложения" data-en="all apps">все приложения</div>
 
                 <div class="product-item" data-cat="apps">
@@ -888,20 +765,19 @@
                         </div>
                     </div>
                 </div>
-
             </section>
 
         </div>
 
     </main>
 
-    <!-- WP App Bar внизу экрана -->
+    <!-- App Bar -->
     <div class="wp-appbar">
         <button type="button" class="appbar-circle-btn" onclick="toggleSearch()" title="Поиск"><i class="fa-solid fa-magnifying-glass"></i></button>
         <button type="button" class="appbar-circle-btn" onclick="toggleMenu()" title="Меню"><i class="fa-solid fa-ellipsis"></i></button>
     </div>
 
-    <!-- Модальное окно О версии -->
+    <!-- Модальное окно -->
     <div class="metro-modal" id="aboutModal">
         <div class="metro-modal-box">
             <div class="metro-modal-title">winmarket store</div>
@@ -914,10 +790,16 @@
     <script>
         var currentLang = 'ru';
         var currentCategory = 'all';
-        var activePivotIndex = 0;
         var currentSelectedApp = null;
 
-        // База данных приложений
+        var baseSections = [
+            { id: 'page-featured', nameRu: 'витрина', nameEn: 'featured' },
+            { id: 'page-downloads', nameRu: 'скачивания', nameEn: 'downloads' },
+            { id: 'page-categories', nameRu: 'категории', nameEn: 'categories' }
+        ];
+
+        var activePivotIndex = 0; // Логический индекс (0, 1, 2)
+
         var appsDatabase = {
             'YouTube': {
                 name: 'YouTube',
@@ -1061,7 +943,105 @@
             }
         };
 
-        // Открытие карточки приложения (анимация выезда слева)
+        // Генерация зацикленных заголовков (создаем дубликаты слева и справа)
+        function renderHeaders() {
+            var container = document.getElementById('headers-slider');
+            container.innerHTML = '';
+            
+            // Дублируем макет 3 раза (всего 9 вкладок для бесшовного круга)
+            for (var loop = 0; loop < 3; loop++) {
+                for (var i = 0; i < baseSections.length; i++) {
+                    var sec = baseSections[i];
+                    var name = currentLang === 'ru' ? sec.nameRu : sec.nameEn;
+                    var globalIdx = loop * 3 + i;
+
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'pivot-header-btn';
+                    btn.id = 'hdr-btn-' + globalIdx;
+                    btn.setAttribute('onclick', 'switchPivot(' + i + ')');
+                    btn.innerText = name;
+
+                    container.appendChild(btn);
+                }
+            }
+            updatePivotUI();
+        }
+
+        function updatePivotUI() {
+            var slider = document.getElementById('pivot-slider');
+            var headerSlider = document.getElementById('headers-slider');
+
+            // Передвигаем страницу контента
+            slider.style.transform = 'translateX(' + (-activePivotIndex * 100) + 'vw)';
+
+            // Сдвигаем заголовки так, чтобы активный всегда был виден
+            var shift = (activePivotIndex + 3) * 200; // Центрируем на среднем блоке
+            headerSlider.style.transform = 'translateX(-' + (activePivotIndex * 180) + 'px)';
+
+            // Подсвечиваем активный заголовок
+            var allBtns = document.querySelectorAll('.pivot-header-btn');
+            for (var i = 0; i < allBtns.length; i++) {
+                allBtns[i].classList.remove('active');
+            }
+
+            var currentActiveBtn = document.getElementById('hdr-btn-' + (activePivotIndex + 3));
+            if (currentActiveBtn) {
+                currentActiveBtn.classList.add('active');
+            }
+        }
+
+        function switchPivot(index) {
+            activePivotIndex = index;
+            updatePivotUI();
+        }
+
+        /* ----- СВАЙП С КРУГОВЫМ ПЕРЕХОДОМ ----- */
+        var startX = 0;
+        var startY = 0;
+        var currentDeltaX = 0;
+        var isDragging = false;
+        var isHorizontalSwipe = false;
+
+        var pivotContainer = document.getElementById('pivot-main-container');
+
+        pivotContainer.addEventListener('touchstart', function(e) {
+            if (e.touches.length !== 1) return;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            currentDeltaX = 0;
+            isDragging = true;
+            isHorizontalSwipe = false;
+        }, { passive: true });
+
+        pivotContainer.addEventListener('touchmove', function(e) {
+            if (!isDragging) return;
+            var deltaX = e.touches[0].clientX - startX;
+            var deltaY = e.touches[0].clientY - startY;
+
+            if (!isHorizontalSwipe && Math.abs(deltaX) < Math.abs(deltaY)) return;
+            isHorizontalSwipe = true;
+            currentDeltaX = deltaX;
+        }, { passive: true });
+
+        pivotContainer.addEventListener('touchend', function() {
+            if (!isDragging) return;
+            isDragging = false;
+
+            if (isHorizontalSwipe) {
+                var threshold = 50;
+                if (currentDeltaX < -threshold) {
+                    // Свайп влево -> следующий экран (по кругу)
+                    activePivotIndex = (activePivotIndex + 1) % 3;
+                    switchPivot(activePivotIndex);
+                } else if (currentDeltaX > threshold) {
+                    // Свайп вправо -> предыдущий экран (по кругу)
+                    activePivotIndex = (activePivotIndex - 1 + 3) % 3;
+                    switchPivot(activePivotIndex);
+                }
+            }
+        });
+
         function openAppDetails(appName) {
             var data = appsDatabase[appName];
             if (!data) return;
@@ -1087,17 +1067,14 @@
             document.getElementById('app-details-screen').classList.remove('open');
         }
 
-        // Клик по кнопке Скачать внутри карточки
         function onDownloadClick() {
             if (currentSelectedApp) {
                 trackDownload(currentSelectedApp.name, currentSelectedApp.icon, currentSelectedApp.bg);
             }
         }
 
-        // Сохранение скачанного приложения
         function trackDownload(name, iconUrl, bgColor) {
             var history = JSON.parse(localStorage.getItem('wm_download_history') || '[]');
-            
             var exists = false;
             for (var i = 0; i < history.length; i++) {
                 if (history[i].name === name) {
@@ -1107,17 +1084,12 @@
             }
 
             if (!exists) {
-                history.unshift({
-                    name: name,
-                    icon: iconUrl,
-                    bg: bgColor
-                });
+                history.unshift({ name: name, icon: iconUrl, bg: bgColor });
                 localStorage.setItem('wm_download_history', JSON.stringify(history));
                 loadDownloadsHistory();
             }
         }
 
-        // Отрисовка списка на вкладке «Скачивания»
         function loadDownloadsHistory() {
             var listContainer = document.getElementById('downloads-history-list');
             var noMsg = document.getElementById('no-downloads-msg');
@@ -1131,7 +1103,6 @@
             }
 
             noMsg.style.display = 'none';
-
             var statusText = currentLang === 'ru' ? 'установлено' : 'installed';
 
             for (var i = 0; i < history.length; i++) {
@@ -1152,21 +1123,6 @@
         function clearDownloadsHistory() {
             localStorage.removeItem('wm_download_history');
             loadDownloadsHistory();
-        }
-
-        function switchPivot(index) {
-            activePivotIndex = index;
-            var slider = document.getElementById('pivot-slider');
-            slider.style.transform = 'translateX(-' + (index * 100) + 'vw)';
-            
-            for (var i = 0; i < 3; i++) {
-                var hdr = document.getElementById('p-hdr-' + i);
-                if (i === index) {
-                    hdr.classList.add('active');
-                } else {
-                    hdr.classList.remove('active');
-                }
-            }
         }
 
         function toggleSearch() {
@@ -1236,6 +1192,8 @@
             document.getElementById('lang-ru').className = 'lang-btn' + (lang === 'ru' ? ' active' : '');
             document.getElementById('lang-en').className = 'lang-btn' + (lang === 'en' ? ' active' : '');
 
+            renderHeaders();
+
             var translatable = document.querySelectorAll('[data-ru]');
             for (var i = 0; i < translatable.length; i++) {
                 var el = translatable[i];
@@ -1268,6 +1226,7 @@
         }
 
         window.onload = function() {
+            renderHeaders();
             loadDownloadsHistory();
         };
     </script>
